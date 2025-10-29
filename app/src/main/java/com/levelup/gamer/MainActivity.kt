@@ -11,17 +11,20 @@ import androidx.lifecycle.lifecycleScope
 import com.levelup.gamer.model.CarritoItem
 import com.levelup.gamer.repository.ProductoRepository
 import com.levelup.gamer.repository.carrito.CarritoRepository
+import com.levelup.gamer.repository.auth.AuthRepository
 import com.levelup.gamer.repository.database.AppDatabase
 import com.levelup.gamer.ui.navigation.MainDrawer
 import com.levelup.gamer.ui.screens.*
 import com.levelup.gamer.ui.theme.LevelUpGamerTheme
 import com.levelup.gamer.model.Producto
+import com.levelup.gamer.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     
     private lateinit var productoRepository: ProductoRepository
     private lateinit var carritoRepository: CarritoRepository
+    private lateinit var authViewModel: AuthViewModel
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +34,9 @@ class MainActivity : ComponentActivity() {
         val database = AppDatabase.getDatabase(applicationContext)
         carritoRepository = CarritoRepository(database.carritoDao())
         
+        val authRepository = AuthRepository(database.userDao())
+        authViewModel = AuthViewModel(authRepository)
+        
         setContent {
             LevelUpGamerTheme {
                 Surface(
@@ -39,7 +45,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MainApp(
                         productoRepository = productoRepository,
-                        carritoRepository = carritoRepository
+                        carritoRepository = carritoRepository,
+                        authViewModel = authViewModel
                     )
                 }
             }
@@ -51,7 +58,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainApp(
     productoRepository: ProductoRepository,
-    carritoRepository: CarritoRepository
+    carritoRepository: CarritoRepository,
+    authViewModel: AuthViewModel
 ) {
     var currentScreen by remember { mutableStateOf("inicio") }
     
@@ -193,12 +201,17 @@ fun MainApp(
                 }
                 
                 "login" -> {
-                    PlaceholderScreen(
-                        title = "Iniciar Sesión",
-                        message = "Próximamente: Sistema de autenticación",
-                        onBackClick = {
+                    LoginScreen(
+                        authViewModel = authViewModel,
+                        onBack = {
                             scope.launch {
                                 drawerState.open()
+                            }
+                        },
+                        onLoginSuccess = {
+                            currentScreen = "inicio"
+                            scope.launch {
+                                drawerState.close()
                             }
                         }
                     )

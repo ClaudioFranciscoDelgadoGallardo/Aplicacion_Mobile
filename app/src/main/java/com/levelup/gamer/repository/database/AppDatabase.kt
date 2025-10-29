@@ -5,16 +5,19 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.levelup.gamer.model.CarritoItem
+import com.levelup.gamer.model.UserEntity
 import com.levelup.gamer.repository.carrito.CarritoDao
+import com.levelup.gamer.repository.auth.UserDao
 
 @Database(
-    entities = [CarritoItem::class],
-    version = 1,
+    entities = [CarritoItem::class, UserEntity::class],
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     
     abstract fun carritoDao(): CarritoDao
+    abstract fun userDao(): UserDao
     
     companion object {
         @Volatile

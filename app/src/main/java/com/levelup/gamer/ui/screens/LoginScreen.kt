@@ -14,14 +14,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.levelup.gamer.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onBack: () -> Unit, onLoginSuccess: () -> Unit) {
+fun LoginScreen(
+    authViewModel: AuthViewModel,
+    onBack: () -> Unit, 
+    onLoginSuccess: () -> Unit
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
+    
+    val authState by authViewModel.authState.collectAsState()
     
     Scaffold(
         topBar = {
@@ -139,7 +145,7 @@ fun LoginScreen(onBack: () -> Unit, onLoginSuccess: () -> Unit) {
             
             Button(
                 onClick = {
-                    showDialog = true
+                    authViewModel.login(email, password, onLoginSuccess)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -148,15 +154,93 @@ fun LoginScreen(onBack: () -> Unit, onLoginSuccess: () -> Unit) {
                     containerColor = Color(0xFF39FF14),
                     contentColor = Color.Black
                 ),
-                enabled = email.isNotBlank() && password.isNotBlank()
+                enabled = email.isNotBlank() && password.isNotBlank() && !authState.isLoading
             ) {
-                Icon(Icons.Filled.Login, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Iniciar Sesión",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                if (authState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = Color.Black
+                    )
+                } else {
+                    Icon(Icons.Filled.Login, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Iniciar Sesión",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+            
+            // Mostrar error si existe
+            authState.error?.let { error ->
+                Spacer(modifier = Modifier.height(16.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFFF5252).copy(alpha = 0.2f)
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Filled.Error,
+                            contentDescription = null,
+                            tint = Color(0xFFFF5252)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = error,
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Mensaje de ayuda con credenciales de prueba
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF1E90FF).copy(alpha = 0.2f)
                 )
+            ) {
+                Column(
+                    modifier = Modifier.padding(12.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Filled.Info,
+                            contentDescription = null,
+                            tint = Color(0xFF1E90FF),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Usuarios de prueba:",
+                            color = Color(0xFF1E90FF),
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Admin: admin@levelup.com / admin123",
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        text = "Usuario: usuario@levelup.com / user123",
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -214,24 +298,5 @@ fun LoginScreen(onBack: () -> Unit, onLoginSuccess: () -> Unit) {
                 }
             }
         }
-    }
-    
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Bienvenido", color = Color(0xFF39FF14)) },
-            text = { Text("Inicio de sesión exitoso", color = Color.White) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showDialog = false
-                        onLoginSuccess()
-                    }
-                ) {
-                    Text("OK", color = Color(0xFF39FF14))
-                }
-            },
-            containerColor = Color(0xFF1A1A1A)
-        )
     }
 }
