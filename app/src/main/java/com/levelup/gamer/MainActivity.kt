@@ -13,9 +13,9 @@ import com.levelup.gamer.repository.ProductoRepository
 import com.levelup.gamer.repository.carrito.CarritoRepository
 import com.levelup.gamer.repository.database.AppDatabase
 import com.levelup.gamer.ui.navigation.MainDrawer
-import com.levelup.gamer.ui.screens.CartScreen
-import com.levelup.gamer.ui.screens.HomeScreen
+import com.levelup.gamer.ui.screens.*
 import com.levelup.gamer.ui.theme.LevelUpGamerTheme
+import com.levelup.gamer.model.Producto
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
