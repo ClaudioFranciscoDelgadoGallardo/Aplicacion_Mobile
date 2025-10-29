@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paleta de colores basada en el proyecto web Level-Up -->
+    <!-- Colores principales -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="neon_green">#FF39FF14</color>
+    <color name="dodger_blue">#FF1E90FF</color>
+    <color name="dark_gray">#FF121212</color>
+    <color name="light_gray">#FFD3D3D3</color>
+    
+    <!-- Colores de error y éxito -->
+    <color name="error_red">#FFFF3860</color>
+    <color name="success_green">#FF09C372</color>
+    
+    <!-- Material Design 3 - Scheme oscuro con verde neón -->
+    <color name="md_theme_dark_primary">#FF39FF14</color>
+    <color name="md_theme_dark_onPrimary">#FF000000</color>
+    <color name="md_theme_dark_primaryContainer">#FF1A3311</color>
+    <color name="md_theme_dark_onPrimaryContainer">#FF39FF14</color>
+    
+    <color name="md_theme_dark_secondary">#FF1E90FF</color>
+    <color name="md_theme_dark_onSecondary">#FF000000</color>
+    <color name="md_theme_dark_secondaryContainer">#FF0A2A4D</color>
+    <color name="md_theme_dark_onSecondaryContainer">#FF1E90FF</color>
+    
+    <color name="md_theme_dark_tertiary">#FFB0BEC5</color>
+    <color name="md_theme_dark_onTertiary">#FF000000</color>
+    <color name="md_theme_dark_tertiaryContainer">#FF263238</color>
+    <color name="md_theme_dark_onTertiaryContainer">#FFCFD8DC</color>
+    
+    <color name="md_theme_dark_error">#FFFF3860</color>
+    <color name="md_theme_dark_onError">#FF000000</color>
+    <color name="md_theme_dark_errorContainer">#FF5A0A1A</color>
+    <color name="md_theme_dark_onErrorContainer">#FFFFDAD6</color>
+    
+    <color name="md_theme_dark_background">#FF000000</color>
+    <color name="md_theme_dark_onBackground">#FFFFFFFF</color>
+    
+    <color name="md_theme_dark_surface">#FF121212</color>
+    <color name="md_theme_dark_onSurface">#FFFFFFFF</color>
+    <color name="md_theme_dark_surfaceVariant">#FF1E1E1E</color>
+    <color name="md_theme_dark_onSurfaceVariant">#FFD3D3D3</color>
+    
+    <color name="md_theme_dark_outline">#FF39FF14</color>
+    <color name="md_theme_dark_outlineVariant">#FF1E90FF</color>
+    
+    <color name="md_theme_dark_scrim">#FF000000</color>
+    <color name="md_theme_dark_inverseSurface">#FFFFFFFF</color>
+    <color name="md_theme_dark_inverseOnSurface">#FF000000</color>
+    <color name="md_theme_dark_inversePrimary">#FF1A7A0A</color>
+    <color name="md_theme_dark_surfaceTint">#FF39FF14</color>
+</resources>
