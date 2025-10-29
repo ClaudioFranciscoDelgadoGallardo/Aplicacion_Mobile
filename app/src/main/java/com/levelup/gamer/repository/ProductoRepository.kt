@@ -55,98 +55,98 @@ class ProductoRepository {
         
         Producto(
             codigo = "CONS-003",
-            nombre = "Nintendo Switch OLED",
-            precio = "$349.990",
-            descripcionCorta = "Consola híbrida con pantalla OLED de 7 pulgadas",
-            descripcionLarga = "Nintendo Switch OLED Model presenta una vibrante pantalla OLED de 7 pulgadas, soporte ajustable, base con puerto LAN, 64GB de almacenamiento interno y audio mejorado para gaming portátil.",
-            categoria = "Consolas",
-            stock = "30",
+            nombre = "NVIDIA GeForce RTX 5090",
+            precio = "$2.400.000",
+            descripcionCorta = "Tarjeta gráfica tope de línea con tecnología Blackwell",
+            descripcionLarga = "La GPU más potente jamás creada. RTX 5090 con arquitectura Blackwell ofrece ray tracing revolucionario, DLSS 4 con IA mejorada y rendimiento extremo para gaming en 8K y creación de contenido profesional.",
+            categoria = "PC Gaming",
+            stock = "5",
             especificaciones = listOf(
-                "Pantalla: OLED de 7 pulgadas",
-                "Resolución: 1280x720 (portátil), 1920x1080 (dock)",
-                "Almacenamiento: 64GB",
-                "Batería: 4.5-9 horas",
-                "Modos: Portátil, sobremesa, TV"
+                "Arquitectura: Blackwell",
+                "Núcleos CUDA: 21,760",
+                "VRAM: 32GB GDDR7",
+                "Boost Clock: 2.9 GHz",
+                "TDP: 600W"
             ),
-            puntuacion = "4.6",
+            puntuacion = "5.0",
             comentarios = listOf(
-                "La pantalla OLED se ve espectacular",
-                "Perfecta para jugar en cualquier lado",
-                "Biblioteca de juegos increíble"
+                "Rendimiento absolutamente brutal",
+                "Gaming en 8K sin problemas",
+                "La mejor GPU del mercado"
             ),
-            imagenUrl = "switch_oled.jpg"
+            imagenUrl = "rtx_5090.jpg"
         ),
         
         Producto(
             codigo = "GAME-001",
-            nombre = "The Legend of Zelda: Tears of the Kingdom",
-            precio = "$59.990",
-            descripcionCorta = "Secuela épica de Breath of the Wild para Nintendo Switch",
-            descripcionLarga = "Explora los vastos paisajes de Hyrule y los cielos misteriosos en esta secuela del aclamado Breath of the Wild. Descubre nuevos poderes, enfrenta enemigos temibles y desentraña el misterio detrás de las lágrimas del reino.",
+            nombre = "Battlefield 6",
+            precio = "$57.990",
+            descripcionCorta = "Shooter táctico de última generación con combate a gran escala",
+            descripcionLarga = "Battlefield 6 lleva la guerra moderna a un nuevo nivel con mapas masivos de 128 jugadores, destrucción avanzada y gráficos de próxima generación. Experimenta batallas épicas con vehículos, infantería y combate táctico intenso.",
             categoria = "Juegos",
             stock = "50",
             especificaciones = listOf(
-                "Plataforma: Nintendo Switch",
-                "Género: Acción-Aventura",
-                "Jugadores: 1",
-                "Editor: Nintendo",
-                "Clasificación: E10+"
+                "Plataforma: PC, PS5, Xbox Series X",
+                "Género: Shooter Táctico",
+                "Jugadores: 1-128 online",
+                "Editor: Electronic Arts",
+                "Clasificación: M17+"
             ),
-            puntuacion = "4.9",
+            puntuacion = "4.7",
             comentarios = listOf(
-                "Obra maestra absoluta",
-                "Mejora todo lo que hizo BOTW",
-                "Juego del año sin duda"
+                "Las batallas a gran escala son increíbles",
+                "Gráficos impresionantes y destrucción realista",
+                "El mejor Battlefield hasta la fecha"
             ),
-            imagenUrl = "zelda_totk.jpg"
+            imagenUrl = "battlefield_6.jpg"
         ),
         
         Producto(
             codigo = "GAME-002",
-            nombre = "Elden Ring",
-            precio = "$54.990",
-            descripcionCorta = "RPG de acción épico del creador de Dark Souls",
-            descripcionLarga = "Un nuevo mundo de fantasía oscura creado por Hidetaka Miyazaki y George R.R. Martin. Explora el vasto mundo del Anillo de Elden, enfréntate a jefes legendarios y forja tu propio destino en este épico RPG de acción.",
+            nombre = "Diablo IV",
+            precio = "$29.990",
+            descripcionCorta = "RPG de acción oscuro con combate visceral y mundo compartido",
+            descripcionLarga = "Regresa al santuario en esta oscura y brutal aventura. Diablo IV ofrece un vasto mundo abierto, cinco clases únicas, combate dinámico y cooperativo, dungeons generados proceduralmente y la amenaza de Lilith, hija de Mephisto.",
             categoria = "Juegos",
             stock = "40",
             especificaciones = listOf(
                 "Plataforma: PS5, Xbox, PC",
-                "Género: RPG de Acción",
+                "Género: Action RPG",
                 "Jugadores: 1-4 online",
-                "Editor: Bandai Namco",
+                "Editor: Blizzard Entertainment",
                 "Clasificación: M17+"
             ),
-            puntuacion = "4.8",
+            puntuacion = "4.5",
             comentarios = listOf(
-                "Increíblemente adictivo y desafiante",
-                "El mejor juego de FromSoftware",
-                "Mundo abierto perfecto"
+                "Addictivo sistema de loot",
+                "Atmósfera oscura perfecta",
+                "Excelente jugabilidad multijugador"
             ),
-            imagenUrl = "elden_ring.jpg"
+            imagenUrl = "diablo_4.jpg"
         ),
         
         Producto(
             codigo = "GAME-003",
-            nombre = "God of War Ragnarök",
-            precio = "$59.990",
-            descripcionCorta = "Épica aventura de Kratos y Atreus en la mitología nórdica",
-            descripcionLarga = "Kratos y Atreus se embarcan en un viaje mítico en busca de respuestas y aliados antes de la llegada del Ragnarök. El impresionante combate y la narrativa cinematográfica regresan en esta espectacular secuela.",
+            nombre = "Stellar Blade",
+            precio = "$45.990",
+            descripcionCorta = "Action RPG futurista con combate espectacular de estilo hack and slash",
+            descripcionLarga = "Una experiencia de acción cinemática ambientada en un futuro distópico. Controla a Eve en su misión para recuperar la Tierra. Combate fluido y desafiante, gráficos impresionantes y una historia épica te esperan en este exclusivo de PS5.",
             categoria = "Juegos",
             stock = "35",
             especificaciones = listOf(
-                "Plataforma: PS5, PS4",
-                "Género: Acción-Aventura",
+                "Plataforma: PS5",
+                "Género: Action RPG",
                 "Jugadores: 1",
                 "Editor: Sony Interactive",
                 "Clasificación: M17+"
             ),
-            puntuacion = "4.9",
+            puntuacion = "4.7",
             comentarios = listOf(
-                "Historia emotiva y combate brutal",
-                "Gráficos impresionantes",
-                "Mejor que el anterior"
+                "Combate increíblemente satisfactorio",
+                "Gráficos de nivel AAA",
+                "Una de las mejores exclusivas de PS5"
             ),
-            imagenUrl = "gow_ragnarok.jpg"
+            imagenUrl = "stellar_blade.jpg"
         ),
         
         Producto(
