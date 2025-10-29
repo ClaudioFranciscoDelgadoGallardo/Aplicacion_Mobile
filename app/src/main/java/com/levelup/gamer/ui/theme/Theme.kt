@@ -10,10 +10,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-/**
- * Esquema de colores oscuro basado en la paleta de Level-Up Gamer
- * Colores principales: Negro (#000000), Verde Neón (#39FF14), Azul (#1E90FF)
- */
 private val DarkColorScheme = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
@@ -51,7 +47,6 @@ fun LevelUpGamerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    // Siempre usamos el tema oscuro para mantener la estética gamer
     val colorScheme = DarkColorScheme
 
     val view = LocalView.current

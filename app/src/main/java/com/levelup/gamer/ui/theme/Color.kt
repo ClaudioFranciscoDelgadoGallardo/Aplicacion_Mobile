@@ -2,7 +2,6 @@ package com.levelup.gamer.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Paleta de colores basada en el proyecto web Level-Up
 val Black = Color(0xFF000000)
 val White = Color(0xFFFFFFFF)
 val NeonGreen = Color(0xFF39FF14)
@@ -12,7 +11,6 @@ val LightGray = Color(0xFFD3D3D3)
 val ErrorRed = Color(0xFFFF3860)
 val SuccessGreen = Color(0xFF09C372)
 
-// Material Design 3 - Dark Theme
 val md_theme_dark_primary = Color(0xFF39FF14)
 val md_theme_dark_onPrimary = Color(0xFF000000)
 val md_theme_dark_primaryContainer = Color(0xFF1A3311)

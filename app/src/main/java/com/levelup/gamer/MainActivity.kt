@@ -3,41 +3,44 @@ package com.levelup.gamer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.levelup.gamer.model.CarritoItem
+import com.levelup.gamer.model.Producto
 import com.levelup.gamer.repository.ProductoRepository
+import com.levelup.gamer.repository.auth.AuthRepository
 import com.levelup.gamer.repository.carrito.CarritoRepository
 import com.levelup.gamer.repository.database.AppDatabase
 import com.levelup.gamer.ui.navigation.MainDrawer
-import com.levelup.gamer.ui.screens.CartScreen
-import com.levelup.gamer.ui.screens.HomeScreen
+import com.levelup.gamer.ui.screens.*
 import com.levelup.gamer.ui.theme.LevelUpGamerTheme
+import com.levelup.gamer.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
-/**
- * Actividad principal de la aplicación
- * 
- * Esta es la única Activity de la app. Todo se maneja con Jetpack Compose.
- * Configura el tema, inicializa los repositorios y gestiona la navegación.
- */
 class MainActivity : ComponentActivity() {
     
-    // Repositorios
     private lateinit var productoRepository: ProductoRepository
     private lateinit var carritoRepository: CarritoRepository
+    private lateinit var authViewModel: AuthViewModel
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Inicializar repositorios
         productoRepository = ProductoRepository()
         
         val database = AppDatabase.getDatabase(applicationContext)
         carritoRepository = CarritoRepository(database.carritoDao())
+        
+        val authRepository = AuthRepository(database.userDao())
+        authViewModel = AuthViewModel(authRepository)
         
         setContent {
             LevelUpGamerTheme {
@@ -47,7 +50,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MainApp(
                         productoRepository = productoRepository,
-                        carritoRepository = carritoRepository
+                        carritoRepository = carritoRepository,
+                        authViewModel = authViewModel
                     )
                 }
             }
@@ -55,34 +59,27 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/**
- * Composable principal que gestiona la navegación y el estado global
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainApp(
     productoRepository: ProductoRepository,
-    carritoRepository: CarritoRepository
+    carritoRepository: CarritoRepository,
+    authViewModel: AuthViewModel
 ) {
-    // Estado de navegación
     var currentScreen by remember { mutableStateOf("inicio") }
     
-    // Estado del drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     
-    // Estado del carrito
     val itemsCarrito by carritoRepository.itemsCarrito.collectAsState(initial = emptyList())
     val cantidadItems by carritoRepository.cantidadItems.collectAsState(initial = 0)
     val totalCarrito by carritoRepository.totalCarrito.collectAsState(initial = 0.0)
     
-    // Estado de mensaje temporal
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
     
     val snackbarHostState = remember { SnackbarHostState() }
     
-    // Mostrar snackbar cuando sea necesario
     LaunchedEffect(showSnackbar) {
         if (showSnackbar) {
             snackbarHostState.showSnackbar(
@@ -110,7 +107,6 @@ fun MainApp(
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { paddingValues ->
-            // Contenido principal basado en la pantalla actual
             when (currentScreen) {
                 "inicio" -> {
                     HomeScreen(
@@ -124,7 +120,6 @@ fun MainApp(
                             currentScreen = "carrito"
                         },
                         onProductClick = { producto ->
-                            // TODO: Navegar a detalle del producto
                             snackbarMessage = "Próximamente: Detalles de ${producto.nombre}"
                             showSnackbar = true
                         },
@@ -174,7 +169,6 @@ fun MainApp(
                     )
                 }
                 
-                // Pantallas temporales (sin implementar)
                 "categorias" -> {
                     PlaceholderScreen(
                         title = "Categorías",
@@ -212,12 +206,17 @@ fun MainApp(
                 }
                 
                 "login" -> {
-                    PlaceholderScreen(
-                        title = "Iniciar Sesión",
-                        message = "Próximamente: Sistema de autenticación",
-                        onBackClick = {
+                    LoginScreen(
+                        authViewModel = authViewModel,
+                        onBack = {
                             scope.launch {
                                 drawerState.open()
+                            }
+                        },
+                        onLoginSuccess = {
+                            currentScreen = "inicio"
+                            scope.launch {
+                                drawerState.close()
                             }
                         }
                     )
@@ -239,9 +238,6 @@ fun MainApp(
     }
 }
 
-/**
- * Pantalla placeholder para funcionalidades pendientes
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaceholderScreen(
