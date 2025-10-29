@@ -17,16 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.levelup.gamer.model.Producto
 import com.levelup.gamer.ui.theme.NeonGreen
 
-/**
- * Pantalla principal (Home) que muestra los productos destacados
- * 
- * @param productos Lista de productos a mostrar
- * @param onMenuClick Callback cuando se presiona el botón de menú
- * @param onCartClick Callback cuando se presiona el carrito
- * @param onProductClick Callback cuando se hace clic en un producto
- * @param onAddToCart Callback cuando se añade un producto al carrito
- * @param cartItemCount Número de items en el carrito
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -40,7 +30,6 @@ fun HomeScreen(
     var searchQuery by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
     
-    // Filtrar productos según la búsqueda
     val productosFiltrados = remember(searchQuery, productos) {
         if (searchQuery.isEmpty()) {
             productos
@@ -81,7 +70,6 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            // Título de la sección
             if (searchQuery.isNotEmpty()) {
                 Text(
                     "🔍 Resultados para \"$searchQuery\"",
@@ -96,11 +84,9 @@ fun HomeScreen(
                 )
             }
             
-            // Mensaje cuando no hay resultados
             if (searchQuery.isNotEmpty() && productosFiltrados.isEmpty()) {
                 EmptySearchResults()
             } else {
-                // Grilla de productos
                 ProductosGrid(
                     productos = productosFiltrados,
                     onProductClick = onProductClick,
@@ -111,9 +97,6 @@ fun HomeScreen(
     }
 }
 
-/**
- * Barra superior normal con logo y acciones
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NormalTopBar(
@@ -184,9 +167,6 @@ fun NormalTopBar(
     )
 }
 
-/**
- * Barra superior de búsqueda
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTopBar(
@@ -249,9 +229,6 @@ fun SearchTopBar(
     )
 }
 
-/**
- * Grilla de productos en 2 columnas
- */
 @Composable
 fun ProductosGrid(
     productos: List<Producto>,
@@ -275,9 +252,6 @@ fun ProductosGrid(
     }
 }
 
-/**
- * Tarjeta individual de producto
- */
 @Composable
 fun ProductoCard(
     producto: Producto,
@@ -295,7 +269,6 @@ fun ProductoCard(
         )
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Imagen del producto (simulada con icono)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -316,7 +289,6 @@ fun ProductoCard(
                     modifier = Modifier.size(48.dp)
                 )
                 
-                // Badge de puntuación
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -343,7 +315,6 @@ fun ProductoCard(
                 }
             }
             
-            // Información del producto
             Column(
                 modifier = Modifier
                     .padding(12.dp)
@@ -379,7 +350,6 @@ fun ProductoCard(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Botón añadir al carrito
                 Button(
                     onClick = onAddToCart,
                     modifier = Modifier.fillMaxWidth(),
@@ -403,9 +373,6 @@ fun ProductoCard(
     }
 }
 
-/**
- * Mensaje cuando no hay resultados de búsqueda
- */
 @Composable
 fun EmptySearchResults() {
     Box(

@@ -10,26 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-/**
- * Item del menú lateral
- * 
- * @property title Título del item
- * @property icon Ícono del item
- * @property route Ruta de navegación
- */
 data class DrawerItem(
     val title: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
     val route: String
 )
 
-/**
- * Menú lateral (Navigation Drawer)
- * 
- * @param currentRoute Ruta actual seleccionada
- * @param onItemClick Callback cuando se hace clic en un item
- * @param modifier Modificador
- */
 @Composable
 fun MainDrawer(
     currentRoute: String,
@@ -54,7 +40,6 @@ fun MainDrawer(
                 .fillMaxSize()
                 .padding(vertical = 16.dp)
         ) {
-            // Header del drawer
             DrawerHeader()
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -63,7 +48,6 @@ fun MainDrawer(
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            // Items del menú
             drawerItems.forEach { item ->
                 NavigationDrawerItem(
                     icon = {
@@ -94,20 +78,15 @@ fun MainDrawer(
                 )
             }
             
-            // Espaciador para empujar el footer al fondo
             Spacer(modifier = Modifier.weight(1f))
             
             Divider()
             
-            // Footer
             DrawerFooter()
         }
     }
 }
 
-/**
- * Header del drawer con logo y título
- */
 @Composable
 fun DrawerHeader() {
     Column(
@@ -143,9 +122,6 @@ fun DrawerHeader() {
     }
 }
 
-/**
- * Footer del drawer con versión y copyright
- */
 @Composable
 fun DrawerFooter() {
     Column(

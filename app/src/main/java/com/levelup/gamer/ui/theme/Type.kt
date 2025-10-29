@@ -6,12 +6,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-/**
- * Tipografía de Level-Up Gamer
- * Fuentes principales: Roboto (cuerpo), Orbitron (títulos - simulado con Bold)
- */
 val Typography = Typography(
-    // Títulos grandes
     displayLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
@@ -34,7 +29,6 @@ val Typography = Typography(
         letterSpacing = 0.sp
     ),
     
-    // Títulos
     headlineLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
@@ -57,7 +51,6 @@ val Typography = Typography(
         letterSpacing = 0.sp
     ),
     
-    // Títulos medianos
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
@@ -80,7 +73,6 @@ val Typography = Typography(
         letterSpacing = 0.1.sp
     ),
     
-    // Texto de cuerpo
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
@@ -103,7 +95,6 @@ val Typography = Typography(
         letterSpacing = 0.4.sp
     ),
     
-    // Etiquetas
     labelLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,

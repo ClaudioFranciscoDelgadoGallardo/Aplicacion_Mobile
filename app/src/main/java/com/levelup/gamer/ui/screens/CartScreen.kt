@@ -16,17 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.levelup.gamer.model.CarritoItem
 import com.levelup.gamer.ui.theme.NeonGreen
 
-/**
- * Pantalla del Carrito de Compras
- * 
- * @param items Lista de items en el carrito
- * @param total Total a pagar
- * @param onBackClick Callback para volver atrás
- * @param onIncrementClick Callback para incrementar cantidad
- * @param onDecrementClick Callback para decrementar cantidad
- * @param onRemoveClick Callback para eliminar item
- * @param onCheckoutClick Callback para finalizar compra
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
@@ -63,19 +52,16 @@ fun CartScreen(
         }
     ) { innerPadding ->
         if (items.isEmpty()) {
-            // Carrito vacío
             EmptyCart(
                 onBackClick = onBackClick,
                 modifier = Modifier.padding(innerPadding)
             )
         } else {
-            // Carrito con items
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
             ) {
-                // Lista de items (ocupa el espacio disponible)
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f)
@@ -93,7 +79,6 @@ fun CartScreen(
                     }
                 }
                 
-                // Resumen y botón de pago (fijo en la parte inferior)
                 CartSummary(
                     itemCount = items.size,
                     total = total,
@@ -104,9 +89,6 @@ fun CartScreen(
     }
 }
 
-/**
- * Tarjeta de item del carrito
- */
 @Composable
 fun CartItemCard(
     item: CarritoItem,
@@ -127,7 +109,6 @@ fun CartItemCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icono del producto
             Box(
                 modifier = Modifier
                     .size(60.dp)
@@ -147,7 +128,6 @@ fun CartItemCard(
             
             Spacer(modifier = Modifier.width(12.dp))
             
-            // Información del producto
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -170,12 +150,10 @@ fun CartItemCard(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Controles de cantidad
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Botón decrementar
                     IconButton(
                         onClick = onDecrementClick,
                         modifier = Modifier.size(32.dp)
@@ -187,7 +165,6 @@ fun CartItemCard(
                         )
                     }
                     
-                    // Cantidad
                     Text(
                         "${item.cantidad}",
                         style = MaterialTheme.typography.titleMedium,
@@ -195,7 +172,6 @@ fun CartItemCard(
                         modifier = Modifier.widthIn(min = 24.dp)
                     )
                     
-                    // Botón incrementar
                     IconButton(
                         onClick = onIncrementClick,
                         modifier = Modifier.size(32.dp)
@@ -209,7 +185,6 @@ fun CartItemCard(
                 }
             }
             
-            // Botón eliminar
             IconButton(
                 onClick = onRemoveClick,
                 modifier = Modifier.size(40.dp)
@@ -224,9 +199,6 @@ fun CartItemCard(
     }
 }
 
-/**
- * Resumen del carrito con total y botón de checkout
- */
 @Composable
 fun CartSummary(
     itemCount: Int,
@@ -243,7 +215,6 @@ fun CartSummary(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Cantidad de items
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -262,7 +233,6 @@ fun CartSummary(
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            // Total
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -284,7 +254,6 @@ fun CartSummary(
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            // Botón de checkout
             Button(
                 onClick = onCheckoutClick,
                 modifier = Modifier
@@ -310,9 +279,6 @@ fun CartSummary(
     }
 }
 
-/**
- * Vista de carrito vacío
- */
 @Composable
 fun EmptyCart(
     onBackClick: () -> Unit,
@@ -375,9 +341,6 @@ fun EmptyCart(
     }
 }
 
-/**
- * Formatea un número como precio
- */
 private fun formatearPrecio(precio: Double): String {
     val precioInt = precio.toInt()
     return "$${"%,d".format(precioInt).replace(",", ".")}"

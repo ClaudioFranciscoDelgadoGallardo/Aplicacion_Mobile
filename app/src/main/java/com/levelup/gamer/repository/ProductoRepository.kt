@@ -2,20 +2,9 @@ package com.levelup.gamer.repository
 
 import com.levelup.gamer.model.Producto
 
-/**
- * Repositorio de Productos
- * 
- * Proporciona acceso a los datos de productos de la tienda gamer.
- * En esta versión, los productos están hardcodeados. En una versión
- * de producción, estos datos vendrían de una API o base de datos.
- */
 class ProductoRepository {
     
-    /**
-     * Lista completa de productos disponibles en la tienda
-     */
     private val productos = listOf(
-        // CONSOLAS
         Producto(
             codigo = "CONS-001",
             nombre = "PlayStation 5",
@@ -88,7 +77,6 @@ class ProductoRepository {
             imagenUrl = "switch_oled.jpg"
         ),
         
-        // JUEGOS
         Producto(
             codigo = "GAME-001",
             nombre = "The Legend of Zelda: Tears of the Kingdom",
@@ -161,7 +149,6 @@ class ProductoRepository {
             imagenUrl = "gow_ragnarok.jpg"
         ),
         
-        // ACCESORIOS
         Producto(
             codigo = "ACC-001",
             nombre = "Headset HyperX Cloud II",
@@ -234,7 +221,6 @@ class ProductoRepository {
             imagenUrl = "logitech_g502.jpg"
         ),
         
-        // PC GAMING
         Producto(
             codigo = "PC-001",
             nombre = "NVIDIA GeForce RTX 4080",
@@ -308,19 +294,10 @@ class ProductoRepository {
         )
     )
     
-    /**
-     * Obtiene todos los productos disponibles
-     */
     fun obtenerTodosLosProductos(): List<Producto> = productos
     
-    /**
-     * Obtiene productos destacados (los primeros 6)
-     */
     fun obtenerProductosDestacados(): List<Producto> = productos.take(6)
     
-    /**
-     * Busca productos por nombre o descripción
-     */
     fun buscarProductos(query: String): List<Producto> {
         if (query.isBlank()) return productos
         
@@ -332,23 +309,14 @@ class ProductoRepository {
         }
     }
     
-    /**
-     * Obtiene productos por categoría
-     */
     fun obtenerProductosPorCategoria(categoria: String): List<Producto> {
         return productos.filter { it.categoria == categoria }
     }
     
-    /**
-     * Obtiene un producto por su código
-     */
     fun obtenerProductoPorCodigo(codigo: String): Producto? {
         return productos.find { it.codigo == codigo }
     }
     
-    /**
-     * Obtiene todas las categorías disponibles
-     */
     fun obtenerCategorias(): List<String> {
         return productos.map { it.categoria }.distinct().sorted()
     }

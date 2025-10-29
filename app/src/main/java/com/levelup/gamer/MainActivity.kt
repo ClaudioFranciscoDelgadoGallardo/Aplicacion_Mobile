@@ -18,22 +18,14 @@ import com.levelup.gamer.ui.screens.HomeScreen
 import com.levelup.gamer.ui.theme.LevelUpGamerTheme
 import kotlinx.coroutines.launch
 
-/**
- * Actividad principal de la aplicación
- * 
- * Esta es la única Activity de la app. Todo se maneja con Jetpack Compose.
- * Configura el tema, inicializa los repositorios y gestiona la navegación.
- */
 class MainActivity : ComponentActivity() {
     
-    // Repositorios
     private lateinit var productoRepository: ProductoRepository
     private lateinit var carritoRepository: CarritoRepository
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Inicializar repositorios
         productoRepository = ProductoRepository()
         
         val database = AppDatabase.getDatabase(applicationContext)
@@ -55,34 +47,26 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/**
- * Composable principal que gestiona la navegación y el estado global
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainApp(
     productoRepository: ProductoRepository,
     carritoRepository: CarritoRepository
 ) {
-    // Estado de navegación
     var currentScreen by remember { mutableStateOf("inicio") }
     
-    // Estado del drawer
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     
-    // Estado del carrito
     val itemsCarrito by carritoRepository.itemsCarrito.collectAsState(initial = emptyList())
     val cantidadItems by carritoRepository.cantidadItems.collectAsState(initial = 0)
     val totalCarrito by carritoRepository.totalCarrito.collectAsState(initial = 0.0)
     
-    // Estado de mensaje temporal
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
     
     val snackbarHostState = remember { SnackbarHostState() }
     
-    // Mostrar snackbar cuando sea necesario
     LaunchedEffect(showSnackbar) {
         if (showSnackbar) {
             snackbarHostState.showSnackbar(
@@ -110,7 +94,6 @@ fun MainApp(
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { paddingValues ->
-            // Contenido principal basado en la pantalla actual
             when (currentScreen) {
                 "inicio" -> {
                     HomeScreen(
@@ -124,7 +107,6 @@ fun MainApp(
                             currentScreen = "carrito"
                         },
                         onProductClick = { producto ->
-                            // TODO: Navegar a detalle del producto
                             snackbarMessage = "Próximamente: Detalles de ${producto.nombre}"
                             showSnackbar = true
                         },
@@ -174,7 +156,6 @@ fun MainApp(
                     )
                 }
                 
-                // Pantallas temporales (sin implementar)
                 "categorias" -> {
                     PlaceholderScreen(
                         title = "Categorías",
@@ -239,9 +220,6 @@ fun MainApp(
     }
 }
 
-/**
- * Pantalla placeholder para funcionalidades pendientes
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaceholderScreen(
