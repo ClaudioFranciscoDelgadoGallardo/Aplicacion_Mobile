@@ -99,7 +99,7 @@ fun DrawerHeader() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.Videogame,
+                imageVector = Icons.Default.SportsEsports,
                 contentDescription = "Logo",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(40.dp)

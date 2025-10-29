@@ -109,7 +109,7 @@ fun NormalTopBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Default.Videogame,
+                    imageVector = Icons.Default.SportsEsports,
                     contentDescription = "Logo",
                     tint = NeonGreen,
                     modifier = Modifier.size(32.dp)
