@@ -12,12 +12,12 @@ class CarritoRepository(private val carritoDao: CarritoDao) {
     
     val totalCarrito: Flow<Double?> = carritoDao.calcularTotal()
     
-    suspend fun agregarProducto(producto: Producto) {
+    suspend fun agregarProducto(producto: Producto, cantidad: Int = 1) {
         val itemExistente = carritoDao.obtenerItemPorCodigo(producto.codigo)
         
         if (itemExistente != null) {
             val itemActualizado = itemExistente.copy(
-                cantidad = itemExistente.cantidad + 1
+                cantidad = itemExistente.cantidad + cantidad
             )
             carritoDao.actualizarItem(itemActualizado)
         } else {
@@ -26,7 +26,7 @@ class CarritoRepository(private val carritoDao: CarritoDao) {
                 nombre = producto.nombre,
                 precio = producto.precio,
                 precioNumerico = extraerPrecioNumerico(producto.precio),
-                cantidad = 1,
+                cantidad = cantidad,
                 imagenUrl = producto.imagenUrl
             )
             carritoDao.insertarItem(nuevoItem)

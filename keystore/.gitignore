@@ -1,0 +1,13 @@
+# Keystore - NO SUBIR A GITHUB
+*.jks
+*.keystore
+
+# Credenciales
+keystore.properties
+local.properties
+
+# Archivos sensibles
+*.pem
+*.p12
+*.pfx
+

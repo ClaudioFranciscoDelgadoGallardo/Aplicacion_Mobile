@@ -14,25 +14,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-
-data class Category(
-    val name: String,
-    val icon: ImageVector,
-    val description: String,
-    val productCount: Int
-)
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.levelup.gamer.viewmodel.CategoriesViewModel
+import com.levelup.gamer.viewmodel.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesScreen(
+    viewModel: CategoriesViewModel = viewModel(),
     onBack: () -> Unit,
     onCategoryClick: (String) -> Unit
 ) {
-    val categories = listOf(
-        Category("Consolas", Icons.Filled.SportsEsports, "PlayStation, Xbox y más", 2),
-        Category("Juegos", Icons.Filled.VideogameAsset, "Los mejores títulos", 3),
-        Category("Accesorios", Icons.Filled.Headset, "Periféricos gaming", 3),
-        Category("PC Gaming", Icons.Filled.Computer, "Componentes y equipos", 4)
+    val uiState by viewModel.uiState.collectAsState()
+    
+    val categoryIcons = mapOf(
+        "Consolas" to Icons.Filled.SportsEsports,
+        "Juegos" to Icons.Filled.VideogameAsset,
+        "Accesorios" to Icons.Filled.Headset,
+        "PC Gaming" to Icons.Filled.Computer
     )
     
     Scaffold(
@@ -59,15 +58,23 @@ fun CategoriesScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(categories) { category ->
-                CategoryCard(category = category, onClick = { onCategoryClick(category.name) })
+            items(uiState.categories) { category ->
+                val icon = categoryIcons[category.name] ?: Icons.Filled.Computer
+                CategoryCard(
+                    category = category,
+                    icon = icon,
+                    onClick = { 
+                        viewModel.selectCategory(category.name)
+                        onCategoryClick(category.name)
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun CategoryCard(category: Category, onClick: () -> Unit) {
+fun CategoryCard(category: Category, icon: ImageVector, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,7 +90,7 @@ fun CategoryCard(category: Category, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = category.icon,
+                imageVector = icon,
                 contentDescription = category.name,
                 modifier = Modifier.size(48.dp),
                 tint = Color(0xFF39FF14)

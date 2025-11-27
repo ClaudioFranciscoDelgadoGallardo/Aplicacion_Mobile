@@ -13,14 +13,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.levelup.gamer.viewmodel.ContactViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactScreen(onBack: () -> Unit) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var message by remember { mutableStateOf("") }
-    var showDialog by remember { mutableStateOf(false) }
+fun ContactScreen(
+    viewModel: ContactViewModel = viewModel(),
+    onBack: () -> Unit
+) {
+    val formState by viewModel.formState.collectAsState()
     
     Scaffold(
         topBar = {
@@ -89,10 +91,16 @@ fun ContactScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             
             OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
+                value = formState.name,
+                onValueChange = { viewModel.updateName(it) },
                 label = { Text("Nombre") },
                 modifier = Modifier.fillMaxWidth(),
+                isError = formState.nameError.isNotEmpty(),
+                supportingText = {
+                    if (formState.nameError.isNotEmpty()) {
+                        Text(formState.nameError, color = MaterialTheme.colorScheme.error)
+                    }
+                },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF39FF14),
                     focusedLabelColor = Color(0xFF39FF14),
@@ -106,10 +114,16 @@ fun ContactScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(12.dp))
             
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = formState.email,
+                onValueChange = { viewModel.updateEmail(it) },
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
+                isError = formState.emailError.isNotEmpty(),
+                supportingText = {
+                    if (formState.emailError.isNotEmpty()) {
+                        Text(formState.emailError, color = MaterialTheme.colorScheme.error)
+                    }
+                },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF39FF14),
                     focusedLabelColor = Color(0xFF39FF14),
@@ -123,13 +137,19 @@ fun ContactScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(12.dp))
             
             OutlinedTextField(
-                value = message,
-                onValueChange = { message = it },
+                value = formState.message,
+                onValueChange = { viewModel.updateMessage(it) },
                 label = { Text("Mensaje") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp),
                 maxLines = 5,
+                isError = formState.messageError.isNotEmpty(),
+                supportingText = {
+                    if (formState.messageError.isNotEmpty()) {
+                        Text(formState.messageError, color = MaterialTheme.colorScheme.error)
+                    }
+                },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF39FF14),
                     focusedLabelColor = Color(0xFF39FF14),
@@ -143,12 +163,7 @@ fun ContactScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
             
             Button(
-                onClick = {
-                    showDialog = true
-                    name = ""
-                    email = ""
-                    message = ""
-                },
+                onClick = { viewModel.submitForm() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -156,26 +171,33 @@ fun ContactScreen(onBack: () -> Unit) {
                     containerColor = Color(0xFF39FF14),
                     contentColor = Color.Black
                 ),
-                enabled = name.isNotBlank() && email.isNotBlank() && message.isNotBlank()
+                enabled = viewModel.isFormValid() && !formState.isSubmitting
             ) {
-                Icon(Icons.Filled.Send, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Enviar mensaje",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
+                if (formState.isSubmitting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = Color.Black
+                    )
+                } else {
+                    Icon(Icons.Filled.Send, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Enviar mensaje",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
     
-    if (showDialog) {
+    if (formState.submitSuccess) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { viewModel.dismissSuccessDialog() },
             title = { Text("Mensaje enviado", color = Color(0xFF39FF14)) },
             text = { Text("Gracias por contactarnos. Te responderemos pronto.", color = Color.White) },
             confirmButton = {
-                TextButton(onClick = { showDialog = false }) {
+                TextButton(onClick = { viewModel.dismissSuccessDialog() }) {
                     Text("OK", color = Color(0xFF39FF14))
                 }
             },

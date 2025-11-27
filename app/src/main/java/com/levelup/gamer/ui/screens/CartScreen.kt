@@ -13,20 +13,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.levelup.gamer.model.CarritoItem
+import com.levelup.gamer.repository.carrito.CarritoRepository
 import com.levelup.gamer.ui.theme.NeonGreen
+import com.levelup.gamer.viewmodel.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
-    items: List<CarritoItem>,
-    total: Double,
+    viewModel: CartViewModel,
     onBackClick: () -> Unit,
-    onIncrementClick: (CarritoItem) -> Unit,
-    onDecrementClick: (CarritoItem) -> Unit,
-    onRemoveClick: (CarritoItem) -> Unit,
-    onCheckoutClick: () -> Unit
+    onCheckoutSuccess: () -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -51,7 +52,7 @@ fun CartScreen(
             )
         }
     ) { innerPadding ->
-        if (items.isEmpty()) {
+        if (uiState.items.isEmpty()) {
             EmptyCart(
                 onBackClick = onBackClick,
                 modifier = Modifier.padding(innerPadding)
@@ -69,20 +70,23 @@ fun CartScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(items) { item ->
+                    items(uiState.items) { item ->
                         CartItemCard(
                             item = item,
-                            onIncrementClick = { onIncrementClick(item) },
-                            onDecrementClick = { onDecrementClick(item) },
-                            onRemoveClick = { onRemoveClick(item) }
+                            onIncrementClick = { viewModel.incrementQuantity(item) },
+                            onDecrementClick = { viewModel.decrementQuantity(item) },
+                            onRemoveClick = { viewModel.removeItem(item) }
                         )
                     }
                 }
                 
                 CartSummary(
-                    itemCount = items.size,
-                    total = total,
-                    onCheckoutClick = onCheckoutClick
+                    itemCount = uiState.itemCount,
+                    total = uiState.totalAmount,
+                    onCheckoutClick = {
+                        viewModel.checkout()
+                        onCheckoutSuccess()
+                    }
                 )
             }
         }

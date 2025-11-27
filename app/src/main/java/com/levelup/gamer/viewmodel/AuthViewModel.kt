@@ -2,11 +2,13 @@ package com.levelup.gamer.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.levelup.gamer.data.UserPreferences
 import com.levelup.gamer.model.UserEntity
 import com.levelup.gamer.repository.auth.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 data class AuthState(
@@ -15,13 +17,17 @@ data class AuthState(
     val error: String? = null
 )
 
-class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
+class AuthViewModel(
+    private val authRepository: AuthRepository,
+    private val userPreferences: UserPreferences
+) : ViewModel() {
     
     private val _authState = MutableStateFlow(AuthState())
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
     
     init {
         initializeUsers()
+        restoreSession()
     }
     
     private fun initializeUsers() {
@@ -30,37 +36,80 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         }
     }
     
+    private fun restoreSession() {
+        viewModelScope.launch {
+            val userId = userPreferences.userIdFlow.first()
+            if (userId != null) {
+                val user = authRepository.getUserById(userId)
+                if (user != null) {
+                    _authState.value = _authState.value.copy(currentUser = user)
+                }
+            }
+        }
+    }
+    
     fun login(email: String, password: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
             _authState.value = _authState.value.copy(isLoading = true, error = null)
             
             try {
-                val user = authRepository.login(email.trim(), password)
+                val result = authRepository.loginWithBackend(email.trim(), password)
                 
-                if (user != null) {
+                result.onSuccess { user ->
+                    userPreferences.saveUser(user.id, user.email, user.nombre)
+                    
                     _authState.value = _authState.value.copy(
                         isLoading = false,
                         currentUser = user,
                         error = null
                     )
                     onSuccess()
+                }.onFailure { backendException ->
+                    val localUser = authRepository.login(email.trim(), password)
+                    
+                    if (localUser != null) {
+                        userPreferences.saveUser(localUser.id, localUser.email, localUser.nombre)
+                        
+                        _authState.value = _authState.value.copy(
+                            isLoading = false,
+                            currentUser = localUser,
+                            error = null
+                        )
+                        onSuccess()
+                    } else {
+                        _authState.value = _authState.value.copy(
+                            isLoading = false,
+                            error = "Credenciales incorrectas o sin conexión"
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                val localUser = authRepository.login(email.trim(), password)
+                
+                if (localUser != null) {
+                    userPreferences.saveUser(localUser.id, localUser.email, localUser.nombre)
+                    
+                    _authState.value = _authState.value.copy(
+                        isLoading = false,
+                        currentUser = localUser,
+                        error = null
+                    )
+                    onSuccess()
                 } else {
                     _authState.value = _authState.value.copy(
                         isLoading = false,
-                        error = "Email o contraseña incorrectos"
+                        error = "Sin conexión y credenciales no encontradas localmente"
                     )
                 }
-            } catch (e: Exception) {
-                _authState.value = _authState.value.copy(
-                    isLoading = false,
-                    error = "Error al iniciar sesión: ${e.message}"
-                )
             }
         }
     }
     
     fun logout() {
-        _authState.value = _authState.value.copy(currentUser = null)
+        viewModelScope.launch {
+            userPreferences.clearUser()
+            _authState.value = _authState.value.copy(currentUser = null)
+        }
     }
     
     fun clearError() {
