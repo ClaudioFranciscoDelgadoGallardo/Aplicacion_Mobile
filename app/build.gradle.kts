@@ -4,6 +4,12 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.0-1.0.13"
 }
 
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = java.util.Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.levelup.gamer"
     compileSdk = 34
@@ -23,10 +29,12 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("${rootProject.projectDir}/keystore/levelup-release.jks")
-            storePassword = "123456"
-            keyAlias = "levelup"
-            keyPassword = "123456"
+            if (keystorePropertiesFile.exists()) {
+                storeFile = file("${rootProject.projectDir}/${keystoreProperties["storeFile"]}")
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+            }
         }
     }
 
