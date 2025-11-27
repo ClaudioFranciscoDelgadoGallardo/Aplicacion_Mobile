@@ -207,6 +207,12 @@ fun ContactScreen(
             containerColor = Color(0xFF1A1A1A)
         )
     }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick
+        )
+    }
 }
 
 @Composable
@@ -246,10 +252,5 @@ fun ContactInfoCard(icon: ImageVector, title: String, content: String) {
                 )
             }
         }
-        
-        FloatingNavigationButtons(
-            onBackClick = onBack,
-            onHomeClick = onHomeClick
-        )
     }
 }
