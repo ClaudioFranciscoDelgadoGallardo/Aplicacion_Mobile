@@ -40,49 +40,55 @@ fun PedidosScreen(
     Box {
         Scaffold(
             topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        "Mis Pedidos",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, "Volver")
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            if (uiState.pedidos.isEmpty()) {
-                PedidosVaciosMessage()
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(uiState.pedidos) { pedido ->
-                        PedidoCard(
-                            pedido = pedido,
-                            onClick = {
-                                viewModel.mostrarDetallePedido(pedido)
-                            }
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            "Mis Pedidos",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
                         )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Default.ArrowBack, "Volver")
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
+                )
+            }
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                if (uiState.pedidos.isEmpty()) {
+                    PedidosVaciosMessage()
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(uiState.pedidos) { pedido ->
+                            PedidoCard(
+                                pedido = pedido,
+                                onClick = {
+                                    viewModel.mostrarDetallePedido(pedido)
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick
+        )
     }
 
     // Dialog de detalle del pedido

@@ -29,21 +29,21 @@ fun ContactScreen(
     Box {
         Scaffold(
             topBar = {
-            TopAppBar(
-                title = { Text("Contáctenos") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, "Volver")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
-                    titleContentColor = Color(0xFF39FF14),
-                    navigationIconContentColor = Color(0xFF39FF14)
+                TopAppBar(
+                    title = { Text("Contáctenos") },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Filled.ArrowBack, "Volver")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Black,
+                        titleContentColor = Color(0xFF39FF14),
+                        navigationIconContentColor = Color(0xFF39FF14)
+                    )
                 )
-            )
-        }
-    ) { paddingValues ->
+            }
+        ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()

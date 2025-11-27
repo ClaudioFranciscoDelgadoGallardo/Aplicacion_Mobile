@@ -39,38 +39,39 @@ fun CategoriesScreen(
     Box {
         Scaffold(
             topBar = {
-            TopAppBar(
-                title = { Text("Categorías") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, "Volver")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
-                    titleContentColor = Color(0xFF39FF14),
-                    navigationIconContentColor = Color(0xFF39FF14)
+                TopAppBar(
+                    title = { Text("Categorías") },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Filled.ArrowBack, "Volver")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Black,
+                        titleContentColor = Color(0xFF39FF14),
+                        navigationIconContentColor = Color(0xFF39FF14)
+                    )
                 )
-            )
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(uiState.categories) { category ->
-                val icon = categoryIcons[category.name] ?: Icons.Filled.Computer
-                CategoryCard(
-                    category = category,
-                    icon = icon,
-                    onClick = { 
-                        viewModel.selectCategory(category.name)
-                        onCategoryClick(category.name)
-                    }
-                )
+            }
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(uiState.categories) { category ->
+                    val icon = categoryIcons[category.name] ?: Icons.Filled.Computer
+                    CategoryCard(
+                        category = category,
+                        icon = icon,
+                        onClick = { 
+                            viewModel.selectCategory(category.name)
+                            onCategoryClick(category.name)
+                        }
+                    )
+                }
             }
         }
         

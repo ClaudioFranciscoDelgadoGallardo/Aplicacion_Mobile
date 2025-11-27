@@ -28,30 +28,31 @@ fun NewsScreen(
     Box {
         Scaffold(
             topBar = {
-            TopAppBar(
-                title = { Text("Noticias Gaming") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, "Volver")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
-                    titleContentColor = Color(0xFF39FF14),
-                    navigationIconContentColor = Color(0xFF39FF14)
+                TopAppBar(
+                    title = { Text("Noticias Gaming") },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Filled.ArrowBack, "Volver")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Black,
+                        titleContentColor = Color(0xFF39FF14),
+                        navigationIconContentColor = Color(0xFF39FF14)
+                    )
                 )
-            )
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(uiState.newsList) { news ->
-                NewsCard(news = news)
+            }
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(uiState.newsList) { news ->
+                    NewsCard(news = news)
+                }
             }
         }
         
