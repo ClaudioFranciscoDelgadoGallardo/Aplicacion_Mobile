@@ -114,7 +114,7 @@ fun RegisterScreen(
                 onValueChange = {
                     nombre = it
                     if (showErrors) {
-                        nombreError = ValidationUtils.validateName(it).second
+                        nombreError = ValidationUtils.validateFullName(it).second
                     }
                 },
                 label = { Text("Nombre completo") },
@@ -301,7 +301,7 @@ fun RegisterScreen(
             Button(
                 onClick = {
                     showErrors = true
-                    nombreError = ValidationUtils.validateName(nombre).second
+                    nombreError = ValidationUtils.validateFullName(nombre).second
                     emailError = ValidationUtils.validateEmail(email).second
                     passwordError = ValidationUtils.validatePassword(password).second
                     confirmPasswordError = if (password != confirmPassword) "Las contraseñas no coinciden" else ""
