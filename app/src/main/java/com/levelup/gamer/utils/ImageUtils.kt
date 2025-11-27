@@ -5,7 +5,10 @@ import com.levelup.gamer.R
 
 object ImageUtils {
     fun getDrawableResourceId(context: Context, imageName: String): Int {
-        return when (imageName) {
+        // Normalizar el nombre a minúsculas para el mapeo
+        val normalizedName = imageName.lowercase().trim()
+        
+        return when (normalizedName) {
             "ps5" -> R.drawable.ps5
             "xbox_series_x" -> R.drawable.xbox_series_x
             "batterfield6" -> R.drawable.batterfield6
@@ -18,7 +21,18 @@ object ImageUtils {
             "intel_core" -> R.drawable.intel_core
             "viewsonic" -> R.drawable.viewsonic
             "icono" -> R.drawable.icono
-            else -> 0
+            else -> {
+                // Intento de carga dinámica como fallback
+                try {
+                    context.resources.getIdentifier(
+                        normalizedName,
+                        "drawable",
+                        context.packageName
+                    )
+                } catch (e: Exception) {
+                    0
+                }
+            }
         }
     }
 }
