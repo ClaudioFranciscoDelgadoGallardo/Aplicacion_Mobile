@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.viewmodel.NewsViewModel
 import com.levelup.gamer.viewmodel.NewsItem
 
@@ -19,12 +20,14 @@ import com.levelup.gamer.viewmodel.NewsItem
 @Composable
 fun NewsScreen(
     viewModel: NewsViewModel = viewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onHomeClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
-    Scaffold(
-        topBar = {
+    Box {
+        Scaffold(
+            topBar = {
             TopAppBar(
                 title = { Text("Noticias Gaming") },
                 navigationIcon = {
@@ -51,6 +54,11 @@ fun NewsScreen(
                 NewsCard(news = news)
             }
         }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick
+        )
     }
 }
 

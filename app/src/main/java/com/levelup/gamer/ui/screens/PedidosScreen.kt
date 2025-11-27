@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.levelup.gamer.model.Pedido
 import com.levelup.gamer.model.EstadoPedido
+import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.viewmodel.PedidosViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,7 +28,8 @@ import com.levelup.gamer.viewmodel.PedidosViewModel
 fun PedidosScreen(
     viewModel: PedidosViewModel,
     userId: Int,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onHomeClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -35,8 +37,9 @@ fun PedidosScreen(
         viewModel.cargarPedidos(userId)
     }
 
-    Scaffold(
-        topBar = {
+    Box {
+        Scaffold(
+            topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
@@ -403,6 +406,11 @@ fun EstadoProgreso(estadoActual: EstadoPedido) {
                 )
             }
         }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick
+        )
     }
 }
 

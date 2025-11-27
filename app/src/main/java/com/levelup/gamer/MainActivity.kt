@@ -224,6 +224,9 @@ fun MainApp(
                                         showSnackbar = true
                                     }
                                 }
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
                             }
                         )
                     }
@@ -241,6 +244,9 @@ fun MainApp(
                                 currentScreen = "inicio"
                                 snackbarMessage = "Mostrando productos de $categoria"
                                 showSnackbar = true
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
                             }
                         )
                     }
@@ -252,6 +258,9 @@ fun MainApp(
                                 scope.launch {
                                     drawerState.open()
                                 }
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
                             }
                         )
                     }
@@ -263,6 +272,9 @@ fun MainApp(
                                 scope.launch {
                                     drawerState.open()
                                 }
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
                             }
                         )
                     }
@@ -309,6 +321,9 @@ fun MainApp(
                                     scope.launch {
                                         drawerState.close()
                                     }
+                                },
+                                onHomeClick = {
+                                    currentScreen = "inicio"
                                 }
                             )
                         }
@@ -340,6 +355,9 @@ fun MainApp(
                             onCategoryClick = { categoria ->
                                 snackbarMessage = "Viendo productos de: $categoria"
                                 showSnackbar = true
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
                             }
                         )
                     }
@@ -384,6 +402,10 @@ fun MainApp(
                                         snackbarMessage = "${producto.nombre} (x$quantity) añadido al carrito"
                                         showSnackbar = true
                                     }
+                                },
+                                onHomeClick = {
+                                    currentScreen = "inicio"
+                                    selectedProducto = null
                                 }
                             )
                         } ?: run {
@@ -400,6 +422,9 @@ fun MainApp(
                                 scope.launch {
                                     drawerState.open()
                                 }
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
                             }
                         )
                     }

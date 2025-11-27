@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.levelup.gamer.model.UserEntity
+import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.utils.ValidationUtils
 import com.levelup.gamer.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
@@ -28,7 +29,8 @@ import kotlinx.coroutines.launch
 fun RegisterScreen(
     authViewModel: AuthViewModel,
     onBack: () -> Unit,
-    onRegisterSuccess: () -> Unit
+    onRegisterSuccess: () -> Unit,
+    onHomeClick: () -> Unit = {}
 ) {
     var nombre by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -52,8 +54,9 @@ fun RegisterScreen(
     // Detectar descuento DuocUC
     val tienDescuentoDuoc = email.lowercase().endsWith("@duocuc.cl")
     
-    Scaffold(
-        topBar = {
+    Box {
+        Scaffold(
+            topBar = {
             TopAppBar(
                 title = { Text("Crear Cuenta") },
                 navigationIcon = {
@@ -452,5 +455,11 @@ fun RegisterScreen(
             
             Spacer(modifier = Modifier.height(32.dp))
         }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick,
+            showHome = false  // En registro solo mostrar botón atrás
+        )
     }
 }

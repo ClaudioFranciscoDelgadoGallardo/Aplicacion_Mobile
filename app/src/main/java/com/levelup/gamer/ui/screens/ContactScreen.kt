@@ -14,18 +14,21 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.viewmodel.ContactViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactScreen(
     viewModel: ContactViewModel = viewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onHomeClick: () -> Unit = {}
 ) {
     val formState by viewModel.formState.collectAsState()
     
-    Scaffold(
-        topBar = {
+    Box {
+        Scaffold(
+            topBar = {
             TopAppBar(
                 title = { Text("Contáctenos") },
                 navigationIcon = {
@@ -243,5 +246,10 @@ fun ContactInfoCard(icon: ImageVector, title: String, content: String) {
                 )
             }
         }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick
+        )
     }
 }

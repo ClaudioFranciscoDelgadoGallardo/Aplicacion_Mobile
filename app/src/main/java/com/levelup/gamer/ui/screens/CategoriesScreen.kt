@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.viewmodel.CategoriesViewModel
 import com.levelup.gamer.viewmodel.Category
 
@@ -23,7 +24,8 @@ import com.levelup.gamer.viewmodel.Category
 fun CategoriesScreen(
     viewModel: CategoriesViewModel = viewModel(),
     onBack: () -> Unit,
-    onCategoryClick: (String) -> Unit
+    onCategoryClick: (String) -> Unit,
+    onHomeClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
@@ -34,8 +36,9 @@ fun CategoriesScreen(
         "PC Gaming" to Icons.Filled.Computer
     )
     
-    Scaffold(
-        topBar = {
+    Box {
+        Scaffold(
+            topBar = {
             TopAppBar(
                 title = { Text("Categorías") },
                 navigationIcon = {
@@ -70,6 +73,11 @@ fun CategoriesScreen(
                 )
             }
         }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick
+        )
     }
 }
 
