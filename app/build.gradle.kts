@@ -23,7 +23,7 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("../keystore/levelup-release.jks")
+            storeFile = file("${rootProject.projectDir}/keystore/levelup-release.jks")
             storePassword = "123456"
             keyAlias = "levelup"
             keyPassword = "123456"
