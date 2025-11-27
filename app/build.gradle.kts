@@ -1,7 +1,16 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "1.9.0-1.0.13"
+}
+
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -23,10 +32,12 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("../keystore/levelup-gamer.jks")
-            storePassword = "LevelUpGamer2025"
-            keyAlias = "levelupgamer"
-            keyPassword = "LevelUpGamer2025"
+            if (keystorePropertiesFile.exists()) {
+                storeFile = file("${rootProject.projectDir}/${keystoreProperties["storeFile"]}")
+                storePassword = keystoreProperties["storePassword"].toString()
+                keyAlias = keystoreProperties["keyAlias"].toString()
+                keyPassword = keystoreProperties["keyPassword"].toString()
+            }
         }
     }
 

@@ -1,11 +1,16 @@
 package com.levelup.gamer.utils
 
 import android.content.Context
+import android.util.Log
 import com.levelup.gamer.R
 
 object ImageUtils {
     fun getDrawableResourceId(context: Context, imageName: String): Int {
-        return when (imageName) {
+        
+        val normalizedName = imageName.lowercase().trim()
+        Log.d("ImageUtils", "Buscando imagen: '$imageName' -> normalizado: '$normalizedName'")
+        
+        val resourceId = when (normalizedName) {
             "ps5" -> R.drawable.ps5
             "xbox_series_x" -> R.drawable.xbox_series_x
             "batterfield6" -> R.drawable.batterfield6
@@ -18,7 +23,24 @@ object ImageUtils {
             "intel_core" -> R.drawable.intel_core
             "viewsonic" -> R.drawable.viewsonic
             "icono" -> R.drawable.icono
-            else -> 0
+            else -> {
+                
+                try {
+                    val id = context.resources.getIdentifier(
+                        normalizedName,
+                        "drawable",
+                        context.packageName
+                    )
+                    Log.d("ImageUtils", "Recurso no encontrado en when, usando getIdentifier: $id")
+                    id
+                } catch (e: Exception) {
+                    Log.e("ImageUtils", "Error buscando recurso: ${e.message}")
+                    0
+                }
+            }
         }
+        
+        Log.d("ImageUtils", "Recurso ID para '$normalizedName': $resourceId")
+        return resourceId
     }
 }

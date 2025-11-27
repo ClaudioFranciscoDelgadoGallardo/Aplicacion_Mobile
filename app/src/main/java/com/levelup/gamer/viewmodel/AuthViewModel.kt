@@ -112,6 +112,29 @@ class AuthViewModel(
         }
     }
     
+    suspend fun registerUser(email: String, password: String, nombre: String): UserEntity? {
+        return try {
+            // Verificar si el email ya existe
+            val existingUser = authRepository.getUserByEmail(email.trim())
+            if (existingUser != null) {
+                throw Exception("Este correo ya está registrado")
+            }
+            
+            // Registrar nuevo usuario (el descuento se asigna automáticamente en el repository)
+            val newUser = authRepository.register(email.trim(), password, nombre.trim())
+            
+            // Guardar sesión
+            userPreferences.saveUser(newUser.id, newUser.email, newUser.nombre)
+            
+            // Actualizar estado
+            _authState.value = _authState.value.copy(currentUser = newUser)
+            
+            newUser
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+    
     fun clearError() {
         _authState.value = _authState.value.copy(error = null)
     }

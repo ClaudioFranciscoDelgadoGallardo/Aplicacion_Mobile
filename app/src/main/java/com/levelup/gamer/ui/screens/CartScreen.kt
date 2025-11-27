@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.levelup.gamer.model.CarritoItem
 import com.levelup.gamer.repository.carrito.CarritoRepository
+import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.ui.theme.NeonGreen
 import com.levelup.gamer.viewmodel.CartViewModel
 
@@ -24,12 +25,14 @@ import com.levelup.gamer.viewmodel.CartViewModel
 fun CartScreen(
     viewModel: CartViewModel,
     onBackClick: () -> Unit,
-    onCheckoutSuccess: () -> Unit
+    onCheckoutSuccess: (Long) -> Unit,  // Ahora recibe el ID del pedido creado
+    onHomeClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
-    Scaffold(
-        topBar = {
+    Box {
+        Scaffold(
+            topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
@@ -85,11 +88,17 @@ fun CartScreen(
                     total = uiState.totalAmount,
                     onCheckoutClick = {
                         viewModel.checkout()
-                        onCheckoutSuccess()
+                        onCheckoutSuccess(0L) // El ID real se genera en MainActivity
                     }
                 )
             }
         }
+    }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBackClick,
+            onHomeClick = onHomeClick
+        )
     }
 }
 

@@ -52,7 +52,23 @@ class AuthRepository(private val userDao: UserDao) {
     }
     
     suspend fun register(user: UserEntity) {
+        // Calcular descuento basado en el email
+        val descuento = UserEntity.calcularDescuentoPorEmail(user.email)
+        val userConDescuento = user.copy(descuentoPorcentaje = descuento)
+        userDao.insertUser(userConDescuento)
+    }
+    
+    suspend fun register(email: String, password: String, nombre: String): UserEntity {
+        val descuento = UserEntity.calcularDescuentoPorEmail(email)
+        val user = UserEntity(
+            email = email,
+            password = password,
+            nombre = nombre,
+            isAdmin = false,
+            descuentoPorcentaje = descuento
+        )
         userDao.insertUser(user)
+        return user
     }
     
     suspend fun initializeDefaultUsers() {
@@ -60,7 +76,7 @@ class AuthRepository(private val userDao: UserDao) {
         if (userCount == 0) {
             userDao.insertUser(
                 UserEntity(
-                    email = "admin@levelup.com",
+                    email = "admlvlup@lvlup.cl",
                     password = "admin123",
                     nombre = "Administrador",
                     isAdmin = true
@@ -68,7 +84,7 @@ class AuthRepository(private val userDao: UserDao) {
             )
             userDao.insertUser(
                 UserEntity(
-                    email = "usuario@levelup.com",
+                    email = "usuariolvlup@lvlup.cl",
                     password = "user123",
                     nombre = "Usuario Gamer",
                     isAdmin = false

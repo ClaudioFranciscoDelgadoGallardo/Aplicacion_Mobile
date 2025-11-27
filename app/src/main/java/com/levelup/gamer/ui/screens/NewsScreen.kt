@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.viewmodel.NewsViewModel
 import com.levelup.gamer.viewmodel.NewsItem
 
@@ -19,38 +20,46 @@ import com.levelup.gamer.viewmodel.NewsItem
 @Composable
 fun NewsScreen(
     viewModel: NewsViewModel = viewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onHomeClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Noticias Gaming") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, "Volver")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
-                    titleContentColor = Color(0xFF39FF14),
-                    navigationIconContentColor = Color(0xFF39FF14)
+    Box {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Noticias Gaming") },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Filled.ArrowBack, "Volver")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Black,
+                        titleContentColor = Color(0xFF39FF14),
+                        navigationIconContentColor = Color(0xFF39FF14)
+                    )
                 )
-            )
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(uiState.newsList) { news ->
-                NewsCard(news = news)
+            }
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(uiState.newsList) { news ->
+                    NewsCard(news = news)
+                }
             }
         }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick
+        )
     }
 }
 

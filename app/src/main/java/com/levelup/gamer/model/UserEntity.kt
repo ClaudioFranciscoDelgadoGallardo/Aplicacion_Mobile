@@ -14,5 +14,26 @@ data class UserEntity(
     val email: String,
     val password: String,
     val nombre: String,
-    val isAdmin: Boolean = false
-)
+    val isAdmin: Boolean = false,
+    val descuentoPorcentaje: Int = 0
+) {
+    fun tieneDescuento(): Boolean = descuentoPorcentaje > 0
+    
+    fun calcularPrecioConDescuento(precio: Double): Double {
+        return if (descuentoPorcentaje > 0) {
+            precio * (1 - descuentoPorcentaje / 100.0)
+        } else {
+            precio
+        }
+    }
+    
+    companion object {
+        fun calcularDescuentoPorEmail(email: String): Int {
+            return if (email.lowercase().endsWith("@duocuc.cl")) {
+                20 // 20% de descuento para DuocUC
+            } else {
+                0
+            }
+        }
+    }
+}

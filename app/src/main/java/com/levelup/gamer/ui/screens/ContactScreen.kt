@@ -14,33 +14,36 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.viewmodel.ContactViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactScreen(
     viewModel: ContactViewModel = viewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onHomeClick: () -> Unit = {}
 ) {
     val formState by viewModel.formState.collectAsState()
     
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Contáctenos") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, "Volver")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
-                    titleContentColor = Color(0xFF39FF14),
-                    navigationIconContentColor = Color(0xFF39FF14)
+    Box {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Contáctenos") },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Filled.ArrowBack, "Volver")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Black,
+                        titleContentColor = Color(0xFF39FF14),
+                        navigationIconContentColor = Color(0xFF39FF14)
+                    )
                 )
-            )
-        }
-    ) { paddingValues ->
+            }
+        ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -49,7 +52,7 @@ fun ContactScreen(
                 .padding(16.dp)
         ) {
             Text(
-                text = "¿Tienes preguntas? ¡Contáctanos!",
+                text = "Contáctanos",
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color(0xFF39FF14),
                 fontWeight = FontWeight.Bold
@@ -60,7 +63,7 @@ fun ContactScreen(
             ContactInfoCard(
                 icon = Icons.Filled.Email,
                 title = "Email",
-                content = "soporte@levelupgamer.com"
+                content = "soporte@lvlup.cl"
             )
             
             Spacer(modifier = Modifier.height(12.dp))
@@ -68,7 +71,7 @@ fun ContactScreen(
             ContactInfoCard(
                 icon = Icons.Filled.Phone,
                 title = "Teléfono",
-                content = "+56 9 1234 5678"
+                content = "+56 9 8010 9955"
             )
             
             Spacer(modifier = Modifier.height(12.dp))
@@ -76,7 +79,7 @@ fun ContactScreen(
             ContactInfoCard(
                 icon = Icons.Filled.LocationOn,
                 title = "Dirección",
-                content = "Av. Gamer 123, Santiago, Chile"
+                content = "Calle Mancos 666, Santiago, Chile"
             )
             
             Spacer(modifier = Modifier.height(24.dp))
@@ -202,6 +205,12 @@ fun ContactScreen(
                 }
             },
             containerColor = Color(0xFF1A1A1A)
+        )
+    }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick
         )
     }
 }

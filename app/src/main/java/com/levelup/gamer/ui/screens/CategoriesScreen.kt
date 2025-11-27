@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.viewmodel.CategoriesViewModel
 import com.levelup.gamer.viewmodel.Category
 
@@ -23,7 +24,8 @@ import com.levelup.gamer.viewmodel.Category
 fun CategoriesScreen(
     viewModel: CategoriesViewModel = viewModel(),
     onBack: () -> Unit,
-    onCategoryClick: (String) -> Unit
+    onCategoryClick: (String) -> Unit,
+    onHomeClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
@@ -34,42 +36,49 @@ fun CategoriesScreen(
         "PC Gaming" to Icons.Filled.Computer
     )
     
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Categorías") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, "Volver")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
-                    titleContentColor = Color(0xFF39FF14),
-                    navigationIconContentColor = Color(0xFF39FF14)
-                )
-            )
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(uiState.categories) { category ->
-                val icon = categoryIcons[category.name] ?: Icons.Filled.Computer
-                CategoryCard(
-                    category = category,
-                    icon = icon,
-                    onClick = { 
-                        viewModel.selectCategory(category.name)
-                        onCategoryClick(category.name)
-                    }
+    Box {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Categorías") },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Filled.ArrowBack, "Volver")
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Black,
+                        titleContentColor = Color(0xFF39FF14),
+                        navigationIconContentColor = Color(0xFF39FF14)
+                    )
                 )
             }
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(uiState.categories) { category ->
+                    val icon = categoryIcons[category.name] ?: Icons.Filled.Computer
+                    CategoryCard(
+                        category = category,
+                        icon = icon,
+                        onClick = { 
+                            viewModel.selectCategory(category.name)
+                            onCategoryClick(category.name)
+                        }
+                    )
+                }
+            }
         }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick
+        )
     }
 }
 

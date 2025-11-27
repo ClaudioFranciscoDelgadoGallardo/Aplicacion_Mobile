@@ -25,7 +25,8 @@ import com.levelup.gamer.viewmodel.AuthViewModel
 fun LoginScreen(
     authViewModel: AuthViewModel,
     onBack: () -> Unit, 
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onRegisterClick: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -346,12 +347,12 @@ fun LoginScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Admin: admin@levelup.com / admin123",
+                        text = "Admin: admlvlup@lvlup.cl / admin123",
                         color = Color.White,
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = "Usuario: usuario@levelup.com / user123",
+                        text = "Usuario: usuariolvlup@lvlup.cl / user123",
                         color = Color.White,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -361,7 +362,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             OutlinedButton(
-                onClick = { },
+                onClick = onRegisterClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

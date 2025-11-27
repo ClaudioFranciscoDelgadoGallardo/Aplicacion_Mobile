@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.levelup.gamer.model.Producto
+import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.viewmodel.ProductDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,12 +27,14 @@ fun ProductDetailScreen(
     producto: Producto,
     viewModel: ProductDetailViewModel = viewModel(),
     onBack: () -> Unit,
-    onAddToCart: () -> Unit
+    onAddToCart: () -> Unit,
+    onHomeClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
-    Scaffold(
-        topBar = {
+    Box {
+        Scaffold(
+            topBar = {
             TopAppBar(
                 title = { Text(producto.nombre) },
                 navigationIcon = {
@@ -291,5 +294,11 @@ fun ProductDetailScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+        
+        FloatingNavigationButtons(
+            onBackClick = onBack,
+            onHomeClick = onHomeClick
+        )
     }
 }

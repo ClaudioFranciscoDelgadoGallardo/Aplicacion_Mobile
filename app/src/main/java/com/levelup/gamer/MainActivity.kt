@@ -16,9 +16,11 @@ import com.levelup.gamer.data.UserPreferences
 import com.levelup.gamer.repository.ProductoRepository
 import com.levelup.gamer.repository.auth.AuthRepository
 import com.levelup.gamer.repository.carrito.CarritoRepository
+import com.levelup.gamer.repository.pedido.PedidoRepository
 import com.levelup.gamer.repository.database.AppDatabase
 import com.levelup.gamer.ui.navigation.MainDrawer
 import com.levelup.gamer.ui.screens.*
+import com.levelup.gamer.ui.screens.RegisterScreen
 import com.levelup.gamer.ui.theme.LevelUpGamerTheme
 import com.levelup.gamer.viewmodel.AuthViewModel
 import com.levelup.gamer.viewmodel.CartViewModel
@@ -28,12 +30,15 @@ import com.levelup.gamer.viewmodel.NewsViewModel
 import com.levelup.gamer.viewmodel.ContactViewModel
 import com.levelup.gamer.viewmodel.ProfileViewModel
 import com.levelup.gamer.viewmodel.ProductDetailViewModel
+import com.levelup.gamer.viewmodel.PedidosViewModel
 import kotlinx.coroutines.launch
+import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
     
     private lateinit var productoRepository: ProductoRepository
     private lateinit var carritoRepository: CarritoRepository
+    private lateinit var pedidoRepository: PedidoRepository
     private lateinit var authViewModel: AuthViewModel
     private lateinit var cartViewModel: CartViewModel
     private lateinit var homeViewModel: HomeViewModel
@@ -42,6 +47,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var contactViewModel: ContactViewModel
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var productDetailViewModel: ProductDetailViewModel
+    private lateinit var pedidosViewModel: PedidosViewModel
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +56,7 @@ class MainActivity : ComponentActivity() {
         
         val database = AppDatabase.getDatabase(applicationContext)
         carritoRepository = CarritoRepository(database.carritoDao())
+        pedidoRepository = PedidoRepository(database.pedidoDao())
         
         val userPreferences = UserPreferences(applicationContext)
         val authRepository = AuthRepository(database.userDao())
@@ -62,6 +69,7 @@ class MainActivity : ComponentActivity() {
         contactViewModel = ContactViewModel()
         profileViewModel = ProfileViewModel()
         productDetailViewModel = ProductDetailViewModel()
+        pedidosViewModel = PedidosViewModel(pedidoRepository)
         
         setContent {
             LevelUpGamerTheme {
@@ -79,7 +87,9 @@ class MainActivity : ComponentActivity() {
                         newsViewModel = newsViewModel,
                         contactViewModel = contactViewModel,
                         profileViewModel = profileViewModel,
-                        productDetailViewModel = productDetailViewModel
+                        productDetailViewModel = productDetailViewModel,
+                        pedidosViewModel = pedidosViewModel,
+                        pedidoRepository = pedidoRepository
                     )
                 }
             }
@@ -99,10 +109,13 @@ fun MainApp(
     newsViewModel: NewsViewModel,
     contactViewModel: ContactViewModel,
     profileViewModel: ProfileViewModel,
-    productDetailViewModel: ProductDetailViewModel
+    productDetailViewModel: ProductDetailViewModel,
+    pedidosViewModel: PedidosViewModel,
+    pedidoRepository: PedidoRepository
 ) {
     var currentScreen by remember { mutableStateOf("inicio") }
     var selectedProducto by remember { mutableStateOf<com.levelup.gamer.model.Producto?>(null) }
+    var pedidoIdActual by remember { mutableStateOf<Long?>(null) }
     
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -179,9 +192,40 @@ fun MainApp(
                             onBackClick = {
                                 currentScreen = "inicio"
                             },
-                            onCheckoutSuccess = {
-                                snackbarMessage = "¡Compra realizada con éxito!"
-                                showSnackbar = true
+                            onCheckoutSuccess = { _ ->
+                                scope.launch {
+                                    // Obtener datos del carrito actual
+                                    val cartState = cartViewModel.uiState.value
+                                    val total = cartState.totalAmount
+                                    val itemCount = cartState.itemCount
+                                    
+                                    if (itemCount > 0) {
+                                        val userId = authState.currentUser?.id ?: 1
+                                        val gson = Gson()
+                                        val itemsJson = gson.toJson(cartState.items)
+                                        
+                                        val nuevoPedidoId = pedidoRepository.crearPedido(
+                                            userId = userId,
+                                            items = itemsJson,
+                                            total = total
+                                        )
+                                        
+                                        // Vaciar carrito
+                                        carritoRepository.vaciarCarrito()
+                                        
+                                        // Iniciar progresión automática
+                                        pedidosViewModel.iniciarProgresionAutomatica(nuevoPedidoId.toInt())
+                                        
+                                        // Navegar a pedidos
+                                        pedidoIdActual = nuevoPedidoId
+                                        currentScreen = "pedido_detalle"
+                                        
+                                        snackbarMessage = "¡Pedido creado exitosamente!"
+                                        showSnackbar = true
+                                    }
+                                }
+                            },
+                            onHomeClick = {
                                 currentScreen = "inicio"
                             }
                         )
@@ -200,6 +244,9 @@ fun MainApp(
                                 currentScreen = "inicio"
                                 snackbarMessage = "Mostrando productos de $categoria"
                                 showSnackbar = true
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
                             }
                         )
                     }
@@ -211,6 +258,9 @@ fun MainApp(
                                 scope.launch {
                                     drawerState.open()
                                 }
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
                             }
                         )
                     }
@@ -222,6 +272,9 @@ fun MainApp(
                                 scope.launch {
                                     drawerState.open()
                                 }
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
                             }
                         )
                     }
@@ -244,6 +297,33 @@ fun MainApp(
                                     scope.launch {
                                         drawerState.close()
                                     }
+                                },
+                                onRegisterClick = {
+                                    currentScreen = "registro"
+                                }
+                            )
+                        }
+                    }
+
+                    "registro" -> {
+                        if (isUserLoggedIn) {
+                            currentScreen = "perfil"
+                        } else {
+                            RegisterScreen(
+                                authViewModel = authViewModel,
+                                onBack = {
+                                    currentScreen = "login"
+                                },
+                                onRegisterSuccess = {
+                                    currentScreen = "perfil"
+                                    snackbarMessage = "¡Cuenta creada exitosamente!"
+                                    showSnackbar = true
+                                    scope.launch {
+                                        drawerState.close()
+                                    }
+                                },
+                                onHomeClick = {
+                                    currentScreen = "inicio"
                                 }
                             )
                         }
@@ -275,6 +355,9 @@ fun MainApp(
                             onCategoryClick = { categoria ->
                                 snackbarMessage = "Viendo productos de: $categoria"
                                 showSnackbar = true
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
                             }
                         )
                     }
@@ -319,6 +402,49 @@ fun MainApp(
                                         snackbarMessage = "${producto.nombre} (x$quantity) añadido al carrito"
                                         showSnackbar = true
                                     }
+                                },
+                                onHomeClick = {
+                                    currentScreen = "inicio"
+                                    selectedProducto = null
+                                }
+                            )
+                        } ?: run {
+                            currentScreen = "inicio"
+                        }
+                    }
+
+                    "pedidos" -> {
+                        val userId = authState.currentUser?.id ?: 1
+                        PedidosScreen(
+                            viewModel = pedidosViewModel,
+                            userId = userId,
+                            onBack = {
+                                scope.launch {
+                                    drawerState.open()
+                                }
+                            },
+                            onHomeClick = {
+                                currentScreen = "inicio"
+                            }
+                        )
+                    }
+
+                    "pedido_detalle" -> {
+                        pedidoIdActual?.let { pedidoId ->
+                            LaunchedEffect(pedidoId) {
+                                val pedido = pedidoRepository.obtenerPedidoPorId(pedidoId.toInt())
+                                pedido?.let {
+                                    pedidosViewModel.mostrarDetallePedido(it)
+                                }
+                            }
+                            
+                            val userId = authState.currentUser?.id ?: 1
+                            PedidosScreen(
+                                viewModel = pedidosViewModel,
+                                userId = userId,
+                                onBack = {
+                                    currentScreen = "inicio"
+                                    pedidoIdActual = null
                                 }
                             )
                         } ?: run {
