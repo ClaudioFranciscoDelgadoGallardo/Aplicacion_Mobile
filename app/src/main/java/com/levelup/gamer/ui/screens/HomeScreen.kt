@@ -1,57 +1,53 @@
 package com.levelup.gamer.ui.screens
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.levelup.gamer.model.Producto
 import com.levelup.gamer.ui.theme.NeonGreen
+import com.levelup.gamer.viewmodel.HomeViewModel
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    productos: List<Producto>,
+    viewModel: HomeViewModel = viewModel(),
     onMenuClick: () -> Unit,
     onCartClick: () -> Unit,
     onProductClick: (Producto) -> Unit,
     onAddToCart: (Producto) -> Unit,
     cartItemCount: Int = 0
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    var isSearchActive by remember { mutableStateOf(false) }
-    
-    val productosFiltrados = remember(searchQuery, productos) {
-        if (searchQuery.isEmpty()) {
-            productos
-        } else {
-            productos.filter { producto ->
-                producto.nombre.contains(searchQuery, ignoreCase = true) ||
-                producto.descripcionCorta.contains(searchQuery, ignoreCase = true) ||
-                producto.categoria.contains(searchQuery, ignoreCase = true)
-            }
-        }
-    }
+    val uiState by viewModel.uiState.collectAsState()
+    val productosFiltrados = viewModel.getFilteredProducts()
     
     Scaffold(
         topBar = {
-            if (isSearchActive) {
+            if (uiState.isSearchActive) {
                 SearchTopBar(
-                    searchQuery = searchQuery,
-                    onSearchQueryChange = { searchQuery = it },
-                    onBackClick = {
-                        isSearchActive = false
-                        searchQuery = ""
-                    },
+                    searchQuery = uiState.searchQuery,
+                    onSearchQueryChange = { viewModel.updateSearchQuery(it) },
+                    onBackClick = { viewModel.setSearchActive(false) },
                     onCartClick = onCartClick,
                     cartItemCount = cartItemCount
                 )
@@ -59,7 +55,7 @@ fun HomeScreen(
                 NormalTopBar(
                     onMenuClick = onMenuClick,
                     onCartClick = onCartClick,
-                    onSearchClick = { isSearchActive = true },
+                    onSearchClick = { viewModel.setSearchActive(true) },
                     cartItemCount = cartItemCount
                 )
             }
@@ -70,21 +66,48 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            if (searchQuery.isNotEmpty()) {
+            if (uiState.selectedCategory != null) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Categoría: ${uiState.selectedCategory}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    AssistChip(
+                        onClick = { viewModel.filterByCategory(null) },
+                        label = { Text("Limpiar filtro") },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
+                        }
+                    )
+                }
+            }
+            
+            if (uiState.searchQuery.isNotEmpty()) {
                 Text(
-                    "🔍 Resultados para \"$searchQuery\"",
+                    "Resultados para \"${uiState.searchQuery}\"",
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(16.dp)
                 )
-            } else {
+            } else if (uiState.selectedCategory == null) {
                 Text(
-                    "⭐ Productos Destacados",
+                    "Productos Destacados",
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(16.dp)
                 )
             }
             
-            if (searchQuery.isNotEmpty() && productosFiltrados.isEmpty()) {
+            if (uiState.searchQuery.isNotEmpty() && productosFiltrados.isEmpty()) {
                 EmptySearchResults()
             } else {
                 ProductosGrid(
@@ -146,19 +169,12 @@ fun NormalTopBar(
                         contentDescription = "Carrito"
                     )
                 }
-                if (cartItemCount > 0) {
-                    Badge(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .offset(x = 4.dp, y = 8.dp),
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Text(
-                            if (cartItemCount > 9) "9+" else cartItemCount.toString(),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
+                com.levelup.gamer.ui.components.AnimatedCartBadge(
+                    count = cartItemCount,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = 4.dp, y = 8.dp)
+                )
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -211,19 +227,12 @@ fun SearchTopBar(
                 IconButton(onClick = onCartClick) {
                     Icon(Icons.Default.ShoppingCart, contentDescription = "Carrito")
                 }
-                if (cartItemCount > 0) {
-                    Badge(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .offset(x = 4.dp, y = 8.dp),
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ) {
-                        Text(
-                            if (cartItemCount > 9) "9+" else cartItemCount.toString(),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                }
+                com.levelup.gamer.ui.components.AnimatedCartBadge(
+                    count = cartItemCount,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = 4.dp, y = 8.dp)
+                )
             }
         }
     )
@@ -242,11 +251,12 @@ fun ProductosGrid(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(productos) { producto ->
-            ProductoCard(
+        itemsIndexed(productos) { index, producto ->
+            com.levelup.gamer.ui.components.AnimatedProductCard(
                 producto = producto,
                 onClick = { onProductClick(producto) },
-                onAddToCart = { onAddToCart(producto) }
+                onAddToCart = { onAddToCart(producto) },
+                index = index
             )
         }
     }
@@ -276,18 +286,36 @@ fun ProductoCard(
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = when (producto.categoria) {
-                        "Consolas" -> Icons.Default.Gamepad
-                        "Juegos" -> Icons.Default.SportsEsports
-                        "Accesorios" -> Icons.Default.Headset
-                        "PC Gaming" -> Icons.Default.Computer
-                        else -> Icons.Default.Image
-                    },
-                    contentDescription = producto.nombre,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(48.dp)
+                val context = LocalContext.current
+                val imageResource = com.levelup.gamer.utils.ImageUtils.getDrawableResourceId(
+                    context,
+                    producto.imagenUrl
                 )
+                
+                if (imageResource != 0) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(imageResource)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = producto.nombre,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = when (producto.categoria) {
+                            "Consolas" -> Icons.Default.Gamepad
+                            "Juegos" -> Icons.Default.SportsEsports
+                            "Accesorios" -> Icons.Default.Headset
+                            "PC Gaming" -> Icons.Default.Computer
+                            else -> Icons.Default.Image
+                        },
+                        contentDescription = producto.nombre,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(48.dp)
+                    )
+                }
                 
                 Box(
                     modifier = Modifier

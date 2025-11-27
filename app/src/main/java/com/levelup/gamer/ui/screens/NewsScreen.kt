@@ -11,43 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-
-data class News(
-    val title: String,
-    val date: String,
-    val summary: String,
-    val category: String
-)
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.levelup.gamer.viewmodel.NewsViewModel
+import com.levelup.gamer.viewmodel.NewsItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewsScreen(onBack: () -> Unit) {
-    val newsList = listOf(
-        News(
-            "Nuevos lanzamientos de la temporada",
-            "25 Oct 2025",
-            "Descubre los juegos más esperados que llegarán este mes a todas las plataformas.",
-            "Lanzamientos"
-        ),
-        News(
-            "Ofertas especiales en consolas",
-            "23 Oct 2025",
-            "PlayStation 5 y Xbox Series X con descuentos increíbles por tiempo limitado.",
-            "Ofertas"
-        ),
-        News(
-            "Torneo Level-Up: Inscripciones abiertas",
-            "20 Oct 2025",
-            "Participa en nuestro torneo mensual y gana increíbles premios gaming.",
-            "Eventos"
-        ),
-        News(
-            "Llegaron las GPU RTX 5000",
-            "18 Oct 2025",
-            "La nueva generación de tarjetas gráficas NVIDIA ya está disponible en stock.",
-            "Hardware"
-        )
-    )
+fun NewsScreen(
+    viewModel: NewsViewModel = viewModel(),
+    onBack: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
     
     Scaffold(
         topBar = {
@@ -73,7 +47,7 @@ fun NewsScreen(onBack: () -> Unit) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(newsList) { news ->
+            items(uiState.newsList) { news ->
                 NewsCard(news = news)
             }
         }
@@ -81,7 +55,7 @@ fun NewsScreen(onBack: () -> Unit) {
 }
 
 @Composable
-fun NewsCard(news: News) {
+fun NewsCard(news: NewsItem) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(

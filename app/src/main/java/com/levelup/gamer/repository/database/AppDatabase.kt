@@ -11,7 +11,7 @@ import com.levelup.gamer.repository.auth.UserDao
 
 @Database(
     entities = [CarritoItem::class, UserEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

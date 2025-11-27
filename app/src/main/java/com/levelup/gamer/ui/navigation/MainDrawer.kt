@@ -19,17 +19,29 @@ data class DrawerItem(
 @Composable
 fun MainDrawer(
     currentRoute: String,
+    isUserLoggedIn: Boolean,
     onItemClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val drawerItems = listOf(
-        DrawerItem("Inicio", Icons.Default.Home, "inicio"),
-        DrawerItem("Categorías", Icons.Default.Category, "categorias"),
-        DrawerItem("Noticias", Icons.Default.Article, "noticias"),
-        DrawerItem("Contáctenos", Icons.Default.Email, "contacto"),
-        DrawerItem("Iniciar Sesión", Icons.Default.Login, "login"),
-        DrawerItem("Configuración", Icons.Default.Settings, "configuracion")
-    )
+    val drawerItems = if (isUserLoggedIn) {
+        listOf(
+            DrawerItem("Inicio", Icons.Default.Home, "inicio"),
+            DrawerItem("Categorías", Icons.Default.Category, "categorias"),
+            DrawerItem("Noticias", Icons.Default.Article, "noticias"),
+            DrawerItem("Contáctenos", Icons.Default.Email, "contacto"),
+            DrawerItem("Mi Perfil", Icons.Default.Person, "perfil"),
+            DrawerItem("Configuración", Icons.Default.Settings, "configuracion")
+        )
+    } else {
+        listOf(
+            DrawerItem("Inicio", Icons.Default.Home, "inicio"),
+            DrawerItem("Categorías", Icons.Default.Category, "categorias"),
+            DrawerItem("Noticias", Icons.Default.Article, "noticias"),
+            DrawerItem("Contáctenos", Icons.Default.Email, "contacto"),
+            DrawerItem("Iniciar Sesión", Icons.Default.Login, "login"),
+            DrawerItem("Configuración", Icons.Default.Settings, "configuracion")
+        )
+    }
     
     ModalDrawerSheet(
         modifier = modifier,

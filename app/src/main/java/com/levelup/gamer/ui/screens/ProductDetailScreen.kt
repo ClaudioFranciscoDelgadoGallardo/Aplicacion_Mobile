@@ -10,18 +10,25 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.levelup.gamer.model.Producto
+import com.levelup.gamer.viewmodel.ProductDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailScreen(
     producto: Producto,
+    viewModel: ProductDetailViewModel = viewModel(),
     onBack: () -> Unit,
     onAddToCart: () -> Unit
 ) {
-    var quantity by remember { mutableStateOf(1) }
+    val uiState by viewModel.uiState.collectAsState()
     
     Scaffold(
         topBar = {
@@ -56,14 +63,35 @@ fun ProductDetailScreen(
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.SportsEsports,
-                        contentDescription = producto.nombre,
-                        modifier = Modifier
-                            .size(200.dp)
-                            .align(Alignment.CenterHorizontally),
-                        tint = Color(0xFF39FF14)
+                    val context = LocalContext.current
+                    val imageResource = com.levelup.gamer.utils.ImageUtils.getDrawableResourceId(
+                        context,
+                        producto.imagenUrl
                     )
+                    
+                    if (imageResource != 0) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(imageResource)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = producto.nombre,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp)
+                                .align(Alignment.CenterHorizontally),
+                            contentScale = ContentScale.Fit
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Filled.SportsEsports,
+                            contentDescription = producto.nombre,
+                            modifier = Modifier
+                                .size(200.dp)
+                                .align(Alignment.CenterHorizontally),
+                            tint = Color(0xFF39FF14)
+                        )
+                    }
                     
                     Spacer(modifier = Modifier.height(16.dp))
                     
@@ -198,7 +226,8 @@ fun ProductDetailScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
-                            onClick = { if (quantity > 1) quantity-- },
+                            onClick = { viewModel.decrementQuantity() },
+                            enabled = uiState.quantity > 1,
                             colors = IconButtonDefaults.iconButtonColors(
                                 contentColor = Color(0xFF39FF14)
                             )
@@ -207,14 +236,15 @@ fun ProductDetailScreen(
                         }
                         
                         Text(
-                            text = quantity.toString(),
+                            text = uiState.quantity.toString(),
                             style = MaterialTheme.typography.headlineMedium,
                             color = Color.White,
                             modifier = Modifier.padding(horizontal = 24.dp)
                         )
                         
                         IconButton(
-                            onClick = { quantity++ },
+                            onClick = { viewModel.incrementQuantity() },
+                            enabled = uiState.quantity < producto.stock.toIntOrNull() ?: 99,
                             colors = IconButtonDefaults.iconButtonColors(
                                 contentColor = Color(0xFF39FF14)
                             )
@@ -229,8 +259,10 @@ fun ProductDetailScreen(
             
             Button(
                 onClick = {
-                    repeat(quantity) { onAddToCart() }
+                    viewModel.markAsAddedToCart()
+                    onAddToCart()
                 },
+                enabled = !uiState.isAddedToCart,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -239,10 +271,19 @@ fun ProductDetailScreen(
                     contentColor = Color.Black
                 )
             ) {
-                Icon(Icons.Filled.ShoppingCart, contentDescription = null)
+                Icon(
+                    imageVector = if (uiState.isAddedToCart) 
+                        Icons.Filled.CheckCircle 
+                    else 
+                        Icons.Filled.ShoppingCart,
+                    contentDescription = null
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Agregar al carrito",
+                    text = if (uiState.isAddedToCart) 
+                        "Agregado al carrito" 
+                    else 
+                        "Agregar al carrito",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
