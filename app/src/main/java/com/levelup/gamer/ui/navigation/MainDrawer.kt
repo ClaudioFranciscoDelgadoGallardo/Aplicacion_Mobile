@@ -27,6 +27,7 @@ fun MainDrawer(
         listOf(
             DrawerItem("Inicio", Icons.Default.Home, "inicio"),
             DrawerItem("Categorías", Icons.Default.Category, "categorias"),
+            DrawerItem("Mis Pedidos", Icons.Default.Receipt, "pedidos"),
             DrawerItem("Noticias", Icons.Default.Article, "noticias"),
             DrawerItem("Contáctenos", Icons.Default.Email, "contacto"),
             DrawerItem("Mi Perfil", Icons.Default.Person, "perfil"),

@@ -24,7 +24,7 @@ import com.levelup.gamer.viewmodel.CartViewModel
 fun CartScreen(
     viewModel: CartViewModel,
     onBackClick: () -> Unit,
-    onCheckoutSuccess: () -> Unit
+    onCheckoutSuccess: (Long) -> Unit  // Ahora recibe el ID del pedido creado
 ) {
     val uiState by viewModel.uiState.collectAsState()
     
@@ -85,7 +85,7 @@ fun CartScreen(
                     total = uiState.totalAmount,
                     onCheckoutClick = {
                         viewModel.checkout()
-                        onCheckoutSuccess()
+                        onCheckoutSuccess(0L) // El ID real se genera en MainActivity
                     }
                 )
             }

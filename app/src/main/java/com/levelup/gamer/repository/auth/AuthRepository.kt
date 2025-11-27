@@ -60,7 +60,7 @@ class AuthRepository(private val userDao: UserDao) {
         if (userCount == 0) {
             userDao.insertUser(
                 UserEntity(
-                    email = "admin@levelup.com",
+                    email = "admlvlup@lvlup.cl",
                     password = "admin123",
                     nombre = "Administrador",
                     isAdmin = true
@@ -68,7 +68,7 @@ class AuthRepository(private val userDao: UserDao) {
             )
             userDao.insertUser(
                 UserEntity(
-                    email = "usuario@levelup.com",
+                    email = "usuariolvlup@lvlup.cl",
                     password = "user123",
                     nombre = "Usuario Gamer",
                     isAdmin = false

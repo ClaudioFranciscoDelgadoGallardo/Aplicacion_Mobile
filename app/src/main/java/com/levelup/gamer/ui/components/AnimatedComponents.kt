@@ -12,9 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.levelup.gamer.model.Producto
 import kotlinx.coroutines.delay
 
@@ -82,19 +86,37 @@ fun AnimatedProductCard(
                             targetValue = if (isPressed) 42.dp else 48.dp,
                             label = "icon_size"
                         )
-
-                        Icon(
-                            imageVector = when (producto.categoria) {
-                                "Consolas" -> Icons.Default.Gamepad
-                                "Juegos" -> Icons.Default.SportsEsports
-                                "Accesorios" -> Icons.Default.Headset
-                                "PC Gaming" -> Icons.Default.Computer
-                                else -> Icons.Default.Image
-                            },
-                            contentDescription = producto.nombre,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(iconSize)
+                        
+                        val context = LocalContext.current
+                        val imageResource = com.levelup.gamer.utils.ImageUtils.getDrawableResourceId(
+                            context,
+                            producto.imagenUrl
                         )
+                        
+                        if (imageResource != 0) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(imageResource)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = producto.nombre,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Icon(
+                                imageVector = when (producto.categoria) {
+                                    "Consolas" -> Icons.Default.Gamepad
+                                    "Juegos" -> Icons.Default.SportsEsports
+                                    "Accesorios" -> Icons.Default.Headset
+                                    "PC Gaming" -> Icons.Default.Computer
+                                    else -> Icons.Default.Image
+                                },
+                                contentDescription = producto.nombre,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(iconSize)
+                            )
+                        }
 
                         Box(
                             modifier = Modifier

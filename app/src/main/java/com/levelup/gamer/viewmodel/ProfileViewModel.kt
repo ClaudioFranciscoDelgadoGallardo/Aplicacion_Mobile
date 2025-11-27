@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 data class ProfileUiState(
     val userName: String = "Gamer Pro",
-    val userEmail: String = "gamer@levelup.com",
+    val userEmail: String = "usuariolvlup@lvlup.cl",
     val profileImageUri: Uri? = null,
     val cameraPermissionGranted: Boolean = false,
     val cameraPermissionDenied: Boolean = false,

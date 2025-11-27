@@ -346,12 +346,12 @@ fun LoginScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Admin: admin@levelup.com / admin123",
+                        text = "Admin: admlvlup@lvlup.cl / admin123",
                         color = Color.White,
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = "Usuario: usuario@levelup.com / user123",
+                        text = "Usuario: usuariolvlup@lvlup.cl / user123",
                         color = Color.White,
                         style = MaterialTheme.typography.bodySmall
                     )
