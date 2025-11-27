@@ -30,28 +30,40 @@ class NewsViewModel : ViewModel() {
     private fun loadNews() {
         val news = listOf(
             NewsItem(
-                "Nuevos lanzamientos de la temporada",
-                "25 Oct 2025",
-                "Descubre los juegos más esperados que llegarán este mes a todas las plataformas.",
+                "GTA VI: Rockstar confirma lanzamiento para 2025",
+                "15 Nov 2025",
+                "Después de años de espera, Grand Theft Auto VI finalmente tiene fecha oficial.",
                 "Lanzamientos"
             ),
             NewsItem(
-                "Ofertas especiales en consolas",
-                "23 Oct 2025",
-                "PlayStation 5 y Xbox Series X con descuentos increíbles por tiempo limitado.",
+                "Black Friday Gaming: Hasta 70% de descuento",
+                "22 Nov 2025",
+                "Las mejores ofertas en juegos, periféricos y hardware esta semana del Black Friday.",
                 "Ofertas"
             ),
             NewsItem(
-                "Torneo Level-Up: Inscripciones abiertas",
-                "20 Oct 2025",
-                "Participa en nuestro torneo mensual y gana increíbles premios gaming.",
+                "The Game Awards 2025: Nominees revelados",
+                "10 Nov 2025",
+                "Baldur's Gate 3 y Zelda: Tears of the Kingdom lideran las nominaciones este año.",
                 "Eventos"
             ),
             NewsItem(
-                "Llegaron las GPU RTX 5000",
-                "18 Oct 2025",
-                "La nueva generación de tarjetas gráficas NVIDIA ya está disponible en stock.",
+                "PlayStation 6: Primeros rumores y especificaciones",
+                "05 Nov 2025",
+                "Sony estaría trabajando en la siguiente generación de consolas con tecnología de IA.",
                 "Hardware"
+            ),
+            NewsItem(
+                "Cyberpunk 2077: Expansion Phantom Liberty arrasa en ventas",
+                "28 Oct 2025",
+                "CD Projekt Red celebra el éxito rotundo de su última expansión con críticas excelentes.",
+                "Lanzamientos"
+            ),
+            NewsItem(
+                "Steam Winter Sale 2025: Fechas confirmadas",
+                "20 Oct 2025",
+                "Valve anuncia las fechas para las rebajas de invierno con miles de juegos en oferta.",
+                "Ofertas"
             )
         )
         _uiState.value = _uiState.value.copy(newsList = news)
