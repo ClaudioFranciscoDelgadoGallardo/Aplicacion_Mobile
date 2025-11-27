@@ -412,11 +412,6 @@ fun EstadoProgreso(estadoActual: EstadoPedido) {
                 )
             }
         }
-        
-        FloatingNavigationButtons(
-            onBackClick = onBack,
-            onHomeClick = onHomeClick
-        )
     }
 }
 

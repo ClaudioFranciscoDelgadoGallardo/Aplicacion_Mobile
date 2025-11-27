@@ -114,7 +114,7 @@ fun RegisterScreen(
                 onValueChange = {
                     nombre = it
                     if (showErrors) {
-                        nombreError = ValidationUtils.validateName(it)
+                        nombreError = ValidationUtils.validateName(it).second
                     }
                 },
                 label = { Text("Nombre completo") },
@@ -146,7 +146,7 @@ fun RegisterScreen(
                 onValueChange = {
                     email = it
                     if (showErrors) {
-                        emailError = ValidationUtils.validateEmail(it)
+                        emailError = ValidationUtils.validateEmail(it).second
                     }
                 },
                 label = { Text("Correo electrónico") },
@@ -221,7 +221,7 @@ fun RegisterScreen(
                 onValueChange = {
                     password = it
                     if (showErrors) {
-                        passwordError = ValidationUtils.validatePassword(it)
+                        passwordError = ValidationUtils.validatePassword(it).second
                     }
                 },
                 label = { Text("Contraseña") },
@@ -301,9 +301,9 @@ fun RegisterScreen(
             Button(
                 onClick = {
                     showErrors = true
-                    nombreError = ValidationUtils.validateName(nombre)
-                    emailError = ValidationUtils.validateEmail(email)
-                    passwordError = ValidationUtils.validatePassword(password)
+                    nombreError = ValidationUtils.validateName(nombre).second
+                    emailError = ValidationUtils.validateEmail(email).second
+                    passwordError = ValidationUtils.validatePassword(password).second
                     confirmPasswordError = if (password != confirmPassword) "Las contraseñas no coinciden" else ""
                     
                     if (nombreError.isEmpty() && emailError.isEmpty() && 
