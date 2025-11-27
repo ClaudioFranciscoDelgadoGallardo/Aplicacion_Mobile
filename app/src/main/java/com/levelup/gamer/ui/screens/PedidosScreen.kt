@@ -238,7 +238,7 @@ fun PedidoDetalleDialog(
     LaunchedEffect(pedido.id) {
         var estado = pedido.estado
         while (estado != EstadoPedido.ENTREGADO) {
-            kotlinx.coroutines.delay(15000) // 15 segundos
+            kotlinx.coroutines.delay(5000) // 5 segundos
             val siguiente = estado.siguiente()
             if (siguiente != null) {
                 estado = siguiente

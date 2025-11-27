@@ -50,9 +50,9 @@ class PedidosViewModel(private val repository: PedidoRepository) : ViewModel() {
             
             var pedido = repository.obtenerPedidoPorId(pedidoId) ?: return@launch
             
-            // Progresión automática de estados cada 15 segundos
+            // Progresión automática de estados cada 5 segundos
             while (pedido.estado != EstadoPedido.ENTREGADO) {
-                delay(15000) // 15 segundos
+                delay(5000) // 5 segundos
                 
                 val siguienteEstado = pedido.estado.siguiente()
                 if (siguienteEstado != null) {
