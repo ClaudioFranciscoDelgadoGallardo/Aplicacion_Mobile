@@ -23,10 +23,10 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("../keystore/levelup-gamer.jks")
-            storePassword = "LevelUpGamer2025"
-            keyAlias = "levelupgamer"
-            keyPassword = "LevelUpGamer2025"
+            storeFile = file("../keystore/levelup-release.jks")
+            storePassword = "123456"
+            keyAlias = "levelup"
+            keyPassword = "123456"
         }
     }
 
