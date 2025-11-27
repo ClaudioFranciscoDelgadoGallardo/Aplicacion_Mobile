@@ -13,7 +13,7 @@ import com.levelup.gamer.repository.pedido.PedidoDao
 
 @Database(
     entities = [CarritoItem::class, UserEntity::class, Pedido::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

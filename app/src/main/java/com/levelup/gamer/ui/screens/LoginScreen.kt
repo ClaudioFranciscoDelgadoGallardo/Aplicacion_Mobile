@@ -25,7 +25,8 @@ import com.levelup.gamer.viewmodel.AuthViewModel
 fun LoginScreen(
     authViewModel: AuthViewModel,
     onBack: () -> Unit, 
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onRegisterClick: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -361,7 +362,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             OutlinedButton(
-                onClick = { },
+                onClick = onRegisterClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

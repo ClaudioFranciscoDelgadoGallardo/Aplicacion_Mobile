@@ -20,6 +20,7 @@ import com.levelup.gamer.repository.pedido.PedidoRepository
 import com.levelup.gamer.repository.database.AppDatabase
 import com.levelup.gamer.ui.navigation.MainDrawer
 import com.levelup.gamer.ui.screens.*
+import com.levelup.gamer.ui.screens.RegisterScreen
 import com.levelup.gamer.ui.theme.LevelUpGamerTheme
 import com.levelup.gamer.viewmodel.AuthViewModel
 import com.levelup.gamer.viewmodel.CartViewModel
@@ -280,6 +281,30 @@ fun MainApp(
                                 onLoginSuccess = {
                                     currentScreen = "perfil"
                                     snackbarMessage = "¡Bienvenido!"
+                                    showSnackbar = true
+                                    scope.launch {
+                                        drawerState.close()
+                                    }
+                                },
+                                onRegisterClick = {
+                                    currentScreen = "registro"
+                                }
+                            )
+                        }
+                    }
+
+                    "registro" -> {
+                        if (isUserLoggedIn) {
+                            currentScreen = "perfil"
+                        } else {
+                            RegisterScreen(
+                                authViewModel = authViewModel,
+                                onBack = {
+                                    currentScreen = "login"
+                                },
+                                onRegisterSuccess = {
+                                    currentScreen = "perfil"
+                                    snackbarMessage = "¡Cuenta creada exitosamente!"
                                     showSnackbar = true
                                     scope.launch {
                                         drawerState.close()
