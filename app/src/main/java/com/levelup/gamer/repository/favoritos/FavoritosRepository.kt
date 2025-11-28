@@ -3,11 +3,8 @@ package com.levelup.gamer.repository.favoritos
 import com.levelup.gamer.model.FavoritoEntity
 import com.levelup.gamer.model.Producto
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class FavoritosRepository @Inject constructor(
+class FavoritosRepository(
     private val favoritoDao: FavoritoDao
 ) {
     
@@ -26,9 +23,9 @@ class FavoritosRepository @Inject constructor(
     suspend fun addFavorito(userId: Int, producto: Producto) {
         val favorito = FavoritoEntity(
             userId = userId,
-            productoId = producto.id,
+            productoId = producto.codigo.hashCode(),
             productoNombre = producto.nombre,
-            productoPrecio = producto.precio,
+            productoPrecio = producto.precio.toDoubleOrNull() ?: 0.0,
             productoImagenUrl = producto.imagenUrl,
             fechaAgregado = System.currentTimeMillis()
         )
@@ -40,10 +37,11 @@ class FavoritosRepository @Inject constructor(
     }
     
     suspend fun toggleFavorito(userId: Int, producto: Producto): Boolean {
-        val esFavorito = isFavorito(userId, producto.id)
+        val productoId = producto.codigo.hashCode()
+        val esFavorito = isFavorito(userId, productoId)
         
         if (esFavorito) {
-            removeFavorito(userId, producto.id)
+            removeFavorito(userId, productoId)
             return false
         } else {
             addFavorito(userId, producto)

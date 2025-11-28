@@ -21,6 +21,9 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: UserEntity)
     
+    @androidx.room.Update
+    suspend fun updateUser(user: UserEntity)
+    
     @Query("SELECT COUNT(*) FROM users")
     suspend fun getUserCount(): Int
 }
