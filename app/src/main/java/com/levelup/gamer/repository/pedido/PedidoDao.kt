@@ -13,6 +13,9 @@ interface PedidoDao {
     @Query("SELECT * FROM pedidos WHERE userId = :userId ORDER BY fecha DESC")
     fun obtenerPedidosPorUsuario(userId: Int): Flow<List<Pedido>>
     
+    @Query("SELECT * FROM pedidos WHERE userId = :userId ORDER BY fecha DESC")
+    suspend fun getPedidosByUserId(userId: Int): List<Pedido>
+    
     @Query("SELECT * FROM pedidos WHERE id = :pedidoId LIMIT 1")
     suspend fun obtenerPedidoPorId(pedidoId: Int): Pedido?
     

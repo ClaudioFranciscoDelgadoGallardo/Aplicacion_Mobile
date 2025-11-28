@@ -1,4 +1,4 @@
-package com.levelup.gamer.repository.database
+package com.levelup.gamer.repository.favoritos
 
 import androidx.room.*
 import com.levelup.gamer.model.FavoritoEntity
