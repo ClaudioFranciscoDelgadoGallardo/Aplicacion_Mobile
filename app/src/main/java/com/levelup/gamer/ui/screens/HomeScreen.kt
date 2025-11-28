@@ -201,9 +201,9 @@ fun SearchTopBar(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     
-    LaunchedEffect(Unit) {
-        delay(100) // Pequeño delay para asegurar que el TextField está listo
+    DisposableEffect(Unit) {
         focusRequester.requestFocus()
+        onDispose { }
     }
     
     CenterAlignedTopAppBar(
