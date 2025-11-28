@@ -83,6 +83,7 @@ class MainActivity : ComponentActivity() {
                     MainApp(
                         productoRepository = productoRepository,
                         carritoRepository = carritoRepository,
+                        favoritosRepository = favoritosRepository,
                         authViewModel = authViewModel,
                         cartViewModel = cartViewModel,
                         homeViewModel = homeViewModel,
@@ -105,6 +106,7 @@ class MainActivity : ComponentActivity() {
 fun MainApp(
     productoRepository: ProductoRepository,
     carritoRepository: CarritoRepository,
+    favoritosRepository: FavoritosRepository,
     authViewModel: AuthViewModel,
     cartViewModel: CartViewModel,
     homeViewModel: HomeViewModel,
