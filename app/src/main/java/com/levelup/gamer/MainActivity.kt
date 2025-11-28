@@ -17,6 +17,7 @@ import com.levelup.gamer.repository.ProductoRepository
 import com.levelup.gamer.repository.auth.AuthRepository
 import com.levelup.gamer.repository.carrito.CarritoRepository
 import com.levelup.gamer.repository.pedido.PedidoRepository
+import com.levelup.gamer.repository.favoritos.FavoritosRepository
 import com.levelup.gamer.repository.database.AppDatabase
 import com.levelup.gamer.ui.navigation.MainDrawer
 import com.levelup.gamer.ui.screens.*
@@ -39,6 +40,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var productoRepository: ProductoRepository
     private lateinit var carritoRepository: CarritoRepository
     private lateinit var pedidoRepository: PedidoRepository
+    private lateinit var favoritosRepository: FavoritosRepository
     private lateinit var authViewModel: AuthViewModel
     private lateinit var cartViewModel: CartViewModel
     private lateinit var homeViewModel: HomeViewModel
@@ -56,7 +58,8 @@ class MainActivity : ComponentActivity() {
         
         val database = AppDatabase.getDatabase(applicationContext)
         carritoRepository = CarritoRepository(database.carritoDao())
-        pedidoRepository = PedidoRepository(database.pedidoDao())
+        pedidoRepository = PedidoRepository(database.pedidoDao(), database.userDao())
+        favoritosRepository = FavoritosRepository(database.favoritoDao())
         
         val userPreferences = UserPreferences(applicationContext)
         val authRepository = AuthRepository(database.userDao())
@@ -67,7 +70,7 @@ class MainActivity : ComponentActivity() {
         categoriesViewModel = CategoriesViewModel()
         newsViewModel = NewsViewModel()
         contactViewModel = ContactViewModel()
-        profileViewModel = ProfileViewModel()
+        profileViewModel = ProfileViewModel(authViewModel, favoritosRepository, database.pedidoDao())
         productDetailViewModel = ProductDetailViewModel()
         pedidosViewModel = PedidosViewModel(pedidoRepository)
         

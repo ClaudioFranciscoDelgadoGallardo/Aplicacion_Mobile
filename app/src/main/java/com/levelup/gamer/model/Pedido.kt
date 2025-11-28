@@ -15,7 +15,8 @@ data class Pedido(
     val total: Double,
     val fecha: Long = System.currentTimeMillis(),
     val estado: EstadoPedido = EstadoPedido.PROCESANDO,
-    val tiempoEstimadoEntrega: String = "45-60 minutos"
+    val tiempoEstimadoEntrega: String = "45-60 minutos",
+    val puntosGanados: Int = 0
 ) {
     fun getFechaFormateada(): String {
         val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())

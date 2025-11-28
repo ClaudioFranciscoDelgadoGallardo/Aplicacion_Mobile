@@ -2,26 +2,75 @@ package com.levelup.gamer.viewmodel
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.levelup.gamer.repository.favoritos.FavoritosRepository
+import com.levelup.gamer.repository.pedido.PedidoDao
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 data class ProfileUiState(
-    val userName: String = "Gamer Pro",
-    val userEmail: String = "usuariolvlup@lvlup.cl",
+    val userName: String = "",
+    val userEmail: String = "",
     val profileImageUri: Uri? = null,
     val cameraPermissionGranted: Boolean = false,
     val cameraPermissionDenied: Boolean = false,
     val showSuccessMessage: Boolean = false,
-    val purchaseCount: Int = 12,
-    val favoriteCount: Int = 34,
-    val points: Int = 2450
+    val purchaseCount: Int = 0,
+    val favoriteCount: Int = 0,
+    val points: Int = 0,
+    val isLoading: Boolean = true
 )
 
-class ProfileViewModel : ViewModel() {
+class ProfileViewModel(
+    private val authViewModel: AuthViewModel,
+    private val favoritosRepository: FavoritosRepository,
+    private val pedidoDao: PedidoDao
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+
+    init {
+        loadUserProfile()
+    }
+
+    private fun loadUserProfile() {
+        viewModelScope.launch {
+            val currentUser = authViewModel.authState.value.currentUser
+            
+            if (currentUser != null) {
+                // Cargar datos del usuario actual
+                _uiState.value = _uiState.value.copy(
+                    userName = currentUser.nombre,
+                    userEmail = currentUser.email,
+                    points = currentUser.puntos,
+                    isLoading = true
+                )
+                
+                // Cargar estadísticas de compras
+                val pedidos = pedidoDao.getPedidosByUserId(currentUser.id)
+                val purchaseCount = pedidos.size
+                
+                // Cargar cantidad de favoritos
+                val favoriteCount = favoritosRepository.getFavoritosCount(currentUser.id)
+                
+                _uiState.value = _uiState.value.copy(
+                    purchaseCount = purchaseCount,
+                    favoriteCount = favoriteCount,
+                    isLoading = false
+                )
+            } else {
+                _uiState.value = ProfileUiState(isLoading = false)
+            }
+        }
+    }
+
+    fun refreshProfile() {
+        loadUserProfile()
+    }
 
     fun updateProfileImage(uri: Uri) {
         _uiState.value = _uiState.value.copy(
@@ -59,5 +108,19 @@ class ProfileViewModel : ViewModel() {
             favoriteCount = favorites,
             points = points
         )
+    }
+}
+
+class ProfileViewModelFactory(
+    private val authViewModel: AuthViewModel,
+    private val favoritosRepository: FavoritosRepository,
+    private val pedidoDao: PedidoDao
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return ProfileViewModel(authViewModel, favoritosRepository, pedidoDao) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

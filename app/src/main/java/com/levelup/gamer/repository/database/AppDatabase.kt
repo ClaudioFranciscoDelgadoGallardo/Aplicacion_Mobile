@@ -7,13 +7,15 @@ import androidx.room.RoomDatabase
 import com.levelup.gamer.model.CarritoItem
 import com.levelup.gamer.model.UserEntity
 import com.levelup.gamer.model.Pedido
+import com.levelup.gamer.model.FavoritoEntity
 import com.levelup.gamer.repository.carrito.CarritoDao
 import com.levelup.gamer.repository.auth.UserDao
 import com.levelup.gamer.repository.pedido.PedidoDao
+import com.levelup.gamer.repository.favoritos.FavoritoDao
 
 @Database(
-    entities = [CarritoItem::class, UserEntity::class, Pedido::class],
-    version = 5,
+    entities = [CarritoItem::class, UserEntity::class, Pedido::class, FavoritoEntity::class],
+    version = 6,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -21,6 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun carritoDao(): CarritoDao
     abstract fun userDao(): UserDao
     abstract fun pedidoDao(): PedidoDao
+    abstract fun favoritoDao(): FavoritoDao
     
     companion object {
         @Volatile

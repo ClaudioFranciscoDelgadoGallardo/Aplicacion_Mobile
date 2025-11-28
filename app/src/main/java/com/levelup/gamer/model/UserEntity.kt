@@ -15,7 +15,9 @@ data class UserEntity(
     val password: String,
     val nombre: String,
     val isAdmin: Boolean = false,
-    val descuentoPorcentaje: Int = 0
+    val descuentoPorcentaje: Int = 0,
+    val puntos: Int = 0,
+    val totalCompras: Int = 0
 ) {
     fun tieneDescuento(): Boolean = descuentoPorcentaje > 0
     
