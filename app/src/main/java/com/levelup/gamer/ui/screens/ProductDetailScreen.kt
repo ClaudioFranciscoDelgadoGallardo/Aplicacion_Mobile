@@ -18,28 +18,65 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.levelup.gamer.model.Producto
+import com.levelup.gamer.model.UserEntity
+import com.levelup.gamer.repository.favoritos.FavoritosRepository
 import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.viewmodel.ProductDetailViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailScreen(
     producto: Producto,
+    currentUser: UserEntity?,
+    favoritosRepository: FavoritosRepository,
     viewModel: ProductDetailViewModel = viewModel(),
     onBack: () -> Unit,
     onAddToCart: () -> Unit,
     onHomeClick: () -> Unit = {}
 ) {
+    var isFavorito by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    
+    LaunchedEffect(currentUser, producto) {
+        currentUser?.let { user ->
+            isFavorito = favoritosRepository.isFavorito(user.id, producto.codigo.hashCode())
+        }
+    }
     val uiState by viewModel.uiState.collectAsState()
     
     Box {
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
             TopAppBar(
-                title = { Text(producto.nombre) },
+                title = { Text(producto.nombre, maxLines = 1) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Filled.ArrowBack, "Volver")
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            currentUser?.let { user ->
+                                scope.launch {
+                                    val resultado = favoritosRepository.toggleFavorito(user.id, producto)
+                                    isFavorito = resultado
+                                    snackbarHostState.showSnackbar(
+                                        message = if (resultado) "Agregado a favoritos" else "Eliminado de favoritos",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isFavorito) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                            contentDescription = if (isFavorito) "Quitar de favoritos" else "Agregar a favoritos",
+                            tint = if (isFavorito) Color.Red else Color(0xFF39FF14)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

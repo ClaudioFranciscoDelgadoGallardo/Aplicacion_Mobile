@@ -42,22 +42,20 @@ class ProfileViewModel(
             val currentUser = authViewModel.authState.value.currentUser
             
             if (currentUser != null) {
-                // Cargar datos del usuario actual
-                _uiState.value = _uiState.value.copy(
-                    userName = currentUser.nombre,
-                    userEmail = currentUser.email,
-                    points = currentUser.puntos,
-                    isLoading = true
-                )
-                
                 // Cargar estadísticas de compras
                 val pedidos = pedidoDao.getPedidosByUserId(currentUser.id)
                 val purchaseCount = pedidos.size
+                
+                // Calcular puntos totales sumando los puntos de todos los pedidos
+                val puntosGanados = pedidos.sumOf { it.puntosGanados }
                 
                 // Cargar cantidad de favoritos
                 val favoriteCount = favoritosRepository.getFavoritosCount(currentUser.id)
                 
                 _uiState.value = _uiState.value.copy(
+                    userName = currentUser.nombre,
+                    userEmail = currentUser.email,
+                    points = puntosGanados,
                     purchaseCount = purchaseCount,
                     favoriteCount = favoriteCount,
                     isLoading = false

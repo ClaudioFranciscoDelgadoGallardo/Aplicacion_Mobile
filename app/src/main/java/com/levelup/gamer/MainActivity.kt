@@ -405,6 +405,8 @@ fun MainApp(
                             
                             ProductDetailScreen(
                                 producto = producto,
+                                currentUser = authState.currentUser,
+                                favoritosRepository = favoritosRepository,
                                 viewModel = productDetailViewModel,
                                 onBack = {
                                     currentScreen = "inicio"
