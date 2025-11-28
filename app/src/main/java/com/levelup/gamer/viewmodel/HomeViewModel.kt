@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 data class HomeUiState(
     val productos: List<Producto> = emptyList(),
+    val productosFiltrados: List<Producto> = emptyList(),
     val searchQuery: String = "",
     val selectedCategory: String? = null,
     val isSearchActive: Boolean = false,
@@ -36,30 +37,35 @@ class HomeViewModel(
             val productosLocales = productoRepository.obtenerProductosDestacados()
             _uiState.value = _uiState.value.copy(
                 productos = productosLocales,
+                productosFiltrados = productosLocales,
                 isLoading = false
             )
         }
     }
 
     fun updateSearchQuery(query: String) {
-        _uiState.value = _uiState.value.copy(searchQuery = query)
+        _uiState.value = _uiState.value.copy(
+            searchQuery = query,
+            productosFiltrados = filterProducts(query, _uiState.value.selectedCategory)
+        )
     }
 
     fun setSearchActive(isActive: Boolean) {
         _uiState.value = _uiState.value.copy(
             isSearchActive = isActive,
-            searchQuery = if (!isActive) "" else _uiState.value.searchQuery
+            searchQuery = if (!isActive) "" else _uiState.value.searchQuery,
+            productosFiltrados = if (!isActive) filterProducts("", _uiState.value.selectedCategory) else _uiState.value.productosFiltrados
         )
     }
 
     fun filterByCategory(category: String?) {
-        _uiState.value = _uiState.value.copy(selectedCategory = category)
+        _uiState.value = _uiState.value.copy(
+            selectedCategory = category,
+            productosFiltrados = filterProducts(_uiState.value.searchQuery, category)
+        )
     }
 
-    fun getFilteredProducts(): List<Producto> {
-        val query = _uiState.value.searchQuery
-        val category = _uiState.value.selectedCategory
-        
+    private fun filterProducts(query: String, category: String?): List<Producto> {
         var filteredList = _uiState.value.productos
         
         if (!category.isNullOrEmpty()) {
@@ -77,5 +83,9 @@ class HomeViewModel(
         }
         
         return filteredList
+    }
+
+    fun getFilteredProducts(): List<Producto> {
+        return _uiState.value.productosFiltrados
     }
 }

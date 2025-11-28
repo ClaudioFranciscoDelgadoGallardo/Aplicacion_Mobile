@@ -20,11 +20,12 @@ data class DrawerItem(
 fun MainDrawer(
     currentRoute: String,
     isUserLoggedIn: Boolean,
+    isAdmin: Boolean = false,
     onItemClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val drawerItems = if (isUserLoggedIn) {
-        listOf(
+        val baseItems = listOf(
             DrawerItem("Inicio", Icons.Default.Home, "inicio"),
             DrawerItem("Categorías", Icons.Default.Category, "categorias"),
             DrawerItem("Mis Pedidos", Icons.Default.Receipt, "pedidos"),
@@ -33,6 +34,12 @@ fun MainDrawer(
             DrawerItem("Mi Perfil", Icons.Default.Person, "perfil"),
             DrawerItem("Configuración", Icons.Default.Settings, "configuracion")
         )
+        
+        if (isAdmin) {
+            baseItems + DrawerItem("Administración", Icons.Default.AdminPanelSettings, "admin")
+        } else {
+            baseItems
+        }
     } else {
         listOf(
             DrawerItem("Inicio", Icons.Default.Home, "inicio"),

@@ -94,7 +94,7 @@ class ProductoRepository {
         }
     }
     
-    private val productos = listOf(
+    private val _productosMutables = mutableListOf(
         Producto(
             codigo = "CONS-001",
             nombre = "PlayStation 5",
@@ -360,6 +360,9 @@ class ProductoRepository {
         )
     )
     
+    private val productos: List<Producto>
+        get() = _productosMutables.toList()
+    
     fun obtenerTodosLosProductos(): List<Producto> = productos
     
     fun obtenerProductosDestacados(): List<Producto> = productos.take(6)
@@ -386,4 +389,33 @@ class ProductoRepository {
     fun obtenerCategorias(): List<String> {
         return productos.map { it.categoria }.distinct().sorted()
     }
+    
+    // Métodos para administración de productos
+    fun actualizarStock(codigo: String, nuevoStock: Int) {
+        val index = _productosMutables.indexOfFirst { it.codigo == codigo }
+        if (index != -1) {
+            _productosMutables[index] = _productosMutables[index].copy(stock = nuevoStock.toString())
+        }
+    }
+    
+    fun agregarProducto(producto: Producto) {
+        // Verificar que no exista un producto con el mismo código
+        if (_productosMutables.none { it.codigo == producto.codigo }) {
+            _productosMutables.add(producto)
+        } else {
+            throw IllegalArgumentException("Ya existe un producto con el código ${producto.codigo}")
+        }
+    }
+    
+    fun eliminarProducto(codigo: String) {
+        _productosMutables.removeIf { it.codigo == codigo }
+    }
+    
+    fun actualizarProducto(producto: Producto) {
+        val index = _productosMutables.indexOfFirst { it.codigo == producto.codigo }
+        if (index != -1) {
+            _productosMutables[index] = producto
+        }
+    }
 }
+

@@ -43,7 +43,6 @@ fun HomeScreen(
     cartItemCount: Int = 0
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val productosFiltrados = viewModel.getFilteredProducts()
     
     Scaffold(
         topBar = {
@@ -70,6 +69,33 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
+            // Campo de búsqueda siempre visible
+            OutlinedTextField(
+                value = uiState.searchQuery,
+                onValueChange = { viewModel.updateSearchQuery(it) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                placeholder = { Text("Buscar productos (ej: play, xbox, consolas...)") },
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = "Buscar")
+                },
+                trailingIcon = {
+                    if (uiState.searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                            Icon(Icons.Default.Close, contentDescription = "Limpiar")
+                        }
+                    }
+                },
+                singleLine = true,
+                shape = MaterialTheme.shapes.medium,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = NeonGreen,
+                    focusedLeadingIconColor = NeonGreen,
+                    cursorColor = NeonGreen
+                )
+            )
+            
             if (uiState.selectedCategory != null) {
                 Row(
                     modifier = Modifier
@@ -111,11 +137,11 @@ fun HomeScreen(
                 )
             }
             
-            if (uiState.searchQuery.isNotEmpty() && productosFiltrados.isEmpty()) {
+            if (uiState.searchQuery.isNotEmpty() && uiState.productosFiltrados.isEmpty()) {
                 EmptySearchResults()
             } else {
                 ProductosGrid(
-                    productos = productosFiltrados,
+                    productos = uiState.productosFiltrados,
                     onProductClick = onProductClick,
                     onAddToCart = onAddToCart
                 )
@@ -159,13 +185,6 @@ fun NormalTopBar(
             }
         },
         actions = {
-            IconButton(onClick = onSearchClick) {
-                Icon(
-                    Icons.Default.Search,
-                    contentDescription = "Buscar"
-                )
-            }
-            
             Box(modifier = Modifier.padding(end = 8.dp)) {
                 IconButton(onClick = onCartClick) {
                     Icon(

@@ -15,35 +15,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SettingsScreen(
     isUserLoggedIn: Boolean,
-    onBack: () -> Unit,
-    onLogout: () -> Unit
+    onBack: () -> Unit
 ) {
     var notificationsEnabled by remember { mutableStateOf(true) }
     var darkModeEnabled by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
-
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Cerrar Sesión") },
-            text = { Text("¿Estás seguro de que deseas cerrar sesión?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showDialog = false
-                        onLogout()
-                    }
-                ) {
-                    Text("Cerrar Sesión", color = Color(0xFFFF5252))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text("Cancelar")
-                }
-            }
-        )
-    }
 
     Scaffold(
         topBar = {
@@ -160,28 +135,6 @@ fun SettingsScreen(
                     SettingItem(Icons.Default.Info, "Versión", "1.0.0")
                     SettingItem(Icons.Default.Build, "Build", "2025.11.26")
                     SettingItem(Icons.Default.Code, "Desarrollador", "Level-Up Team")
-                }
-            }
-            
-            if (isUserLoggedIn) {
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                Button(
-                    onClick = { showDialog = true },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFF5252),
-                        contentColor = Color.White
-                    )
-                ) {
-                    Icon(Icons.Default.Logout, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        "Cerrar Sesión",
-                        fontWeight = FontWeight.Bold
-                    )
                 }
             }
         }

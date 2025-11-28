@@ -32,6 +32,7 @@ import com.levelup.gamer.viewmodel.ContactViewModel
 import com.levelup.gamer.viewmodel.ProfileViewModel
 import com.levelup.gamer.viewmodel.ProductDetailViewModel
 import com.levelup.gamer.viewmodel.PedidosViewModel
+import com.levelup.gamer.viewmodel.AdminViewModel
 import kotlinx.coroutines.launch
 import com.google.gson.Gson
 
@@ -50,6 +51,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var productDetailViewModel: ProductDetailViewModel
     private lateinit var pedidosViewModel: PedidosViewModel
+    private lateinit var adminViewModel: AdminViewModel
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +75,7 @@ class MainActivity : ComponentActivity() {
         profileViewModel = ProfileViewModel(authViewModel, favoritosRepository, database.pedidoDao())
         productDetailViewModel = ProductDetailViewModel()
         pedidosViewModel = PedidosViewModel(pedidoRepository)
+        adminViewModel = AdminViewModel(productoRepository)
         
         setContent {
             LevelUpGamerTheme {
@@ -93,7 +96,8 @@ class MainActivity : ComponentActivity() {
                         profileViewModel = profileViewModel,
                         productDetailViewModel = productDetailViewModel,
                         pedidosViewModel = pedidosViewModel,
-                        pedidoRepository = pedidoRepository
+                        pedidoRepository = pedidoRepository,
+                        adminViewModel = adminViewModel
                     )
                 }
             }
@@ -116,7 +120,8 @@ fun MainApp(
     profileViewModel: ProfileViewModel,
     productDetailViewModel: ProductDetailViewModel,
     pedidosViewModel: PedidosViewModel,
-    pedidoRepository: PedidoRepository
+    pedidoRepository: PedidoRepository,
+    adminViewModel: AdminViewModel
 ) {
     var currentScreen by remember { mutableStateOf("inicio") }
     var selectedProducto by remember { mutableStateOf<com.levelup.gamer.model.Producto?>(null) }
@@ -127,6 +132,7 @@ fun MainApp(
     
     val authState by authViewModel.authState.collectAsState()
     val isUserLoggedIn = authState.currentUser != null
+    val isAdmin = authState.currentUser?.isAdmin ?: false
     
     val cantidadItems by carritoRepository.cantidadItems.collectAsState(initial = 0)
 
@@ -151,6 +157,7 @@ fun MainApp(
             MainDrawer(
                 currentRoute = currentScreen,
                 isUserLoggedIn = isUserLoggedIn,
+                isAdmin = isAdmin,
                 onItemClick = { route ->
                     currentScreen = route
                     scope.launch {
@@ -355,6 +362,12 @@ fun MainApp(
                                     scope.launch {
                                         drawerState.open()
                                     }
+                                },
+                                onLogout = {
+                                    authViewModel.logout()
+                                    currentScreen = "inicio"
+                                    snackbarMessage = "Sesión cerrada"
+                                    showSnackbar = true
                                 }
                             )
                         } else {
@@ -387,14 +400,23 @@ fun MainApp(
                                 scope.launch {
                                     drawerState.open()
                                 }
-                            },
-                            onLogout = {
-                                authViewModel.logout()
-                                currentScreen = "inicio"
-                                snackbarMessage = "Sesión cerrada"
-                                showSnackbar = true
                             }
                         )
+                    }
+
+                    "admin" -> {
+                        if (isUserLoggedIn && isAdmin) {
+                            AdminScreen(
+                                viewModel = adminViewModel,
+                                onBack = {
+                                    scope.launch {
+                                        drawerState.open()
+                                    }
+                                }
+                            )
+                        } else {
+                            currentScreen = "login"
+                        }
                     }
 
                     "detalle_producto" -> {
