@@ -202,8 +202,8 @@ fun SearchTopBar(
     val keyboardController = LocalSoftwareKeyboardController.current
     
     LaunchedEffect(Unit) {
+        delay(100) // Pequeño delay para asegurar que el TextField está listo
         focusRequester.requestFocus()
-        keyboardController?.show()
     }
     
     CenterAlignedTopAppBar(
