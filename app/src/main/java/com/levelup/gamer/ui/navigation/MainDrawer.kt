@@ -126,7 +126,7 @@ fun DrawerHeader() {
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    "Tu tienda gamer de confianza",
+                    "Todo para subir de nivel",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -144,13 +144,18 @@ fun DrawerFooter() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "Versión 1.0.0",
+            "Versión 5.0.1",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            "© 2025 Level-Up Gamer",
+            "© 2025 LvlUP Gamer",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            "Todos los derechos reservados",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
