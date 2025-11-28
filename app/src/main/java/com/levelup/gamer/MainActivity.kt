@@ -192,6 +192,7 @@ fun MainApp(
                     "carrito" -> {
                         CartScreen(
                             viewModel = cartViewModel,
+                            currentUser = authState.currentUser,
                             onBackClick = {
                                 currentScreen = "inicio"
                             },
@@ -199,19 +200,31 @@ fun MainApp(
                                 scope.launch {
                                     // Obtener datos del carrito actual
                                     val cartState = cartViewModel.uiState.value
-                                    val total = cartState.totalAmount
                                     val itemCount = cartState.itemCount
                                     
                                     if (itemCount > 0) {
                                         val userId = authState.currentUser?.id ?: 1
+                                        val user = authState.currentUser
+                                        
+                                        // Calcular total con descuento
+                                        val subtotal = cartState.totalAmount
+                                        val descuentoPorcentaje = user?.descuentoPorcentaje ?: 0
+                                        val descuento = if (descuentoPorcentaje > 0) {
+                                            subtotal * (descuentoPorcentaje / 100.0)
+                                        } else 0.0
+                                        val totalFinal = subtotal - descuento
+                                        
                                         val gson = Gson()
                                         val itemsJson = gson.toJson(cartState.items)
                                         
                                         val nuevoPedidoId = pedidoRepository.crearPedido(
                                             userId = userId,
                                             items = itemsJson,
-                                            total = total
+                                            total = totalFinal
                                         )
+                                        
+                                        // Actualizar perfil para reflejar cambios
+                                        profileViewModel.refreshProfile()
                                         
                                         // Vaciar carrito
                                         carritoRepository.vaciarCarrito()

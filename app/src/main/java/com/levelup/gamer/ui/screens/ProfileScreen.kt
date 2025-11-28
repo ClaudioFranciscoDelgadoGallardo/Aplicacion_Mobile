@@ -52,6 +52,8 @@ fun ProfileScreen(
 
     LaunchedEffect(Unit) {
         contentVisible = true
+        // Refrescar perfil cada vez que se muestra la pantalla
+        viewModel.refreshProfile()
     }
 
     val cameraLauncher = rememberLauncherForActivityResult(

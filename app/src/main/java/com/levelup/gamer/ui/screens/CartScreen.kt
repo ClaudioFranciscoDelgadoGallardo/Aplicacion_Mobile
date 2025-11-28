@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.levelup.gamer.model.CarritoItem
+import com.levelup.gamer.model.UserEntity
 import com.levelup.gamer.repository.carrito.CarritoRepository
 import com.levelup.gamer.ui.components.FloatingNavigationButtons
 import com.levelup.gamer.ui.theme.NeonGreen
@@ -24,6 +25,7 @@ import com.levelup.gamer.viewmodel.CartViewModel
 @Composable
 fun CartScreen(
     viewModel: CartViewModel,
+    currentUser: UserEntity?,
     onBackClick: () -> Unit,
     onCheckoutSuccess: (Long) -> Unit,  // Ahora recibe el ID del pedido creado
     onHomeClick: () -> Unit = {}
@@ -86,6 +88,7 @@ fun CartScreen(
                 CartSummary(
                     itemCount = uiState.itemCount,
                     total = uiState.totalAmount,
+                    currentUser = currentUser,
                     onCheckoutClick = {
                         viewModel.checkout()
                         onCheckoutSuccess(0L) // El ID real se genera en MainActivity
@@ -216,8 +219,17 @@ fun CartItemCard(
 fun CartSummary(
     itemCount: Int,
     total: Double,
+    currentUser: UserEntity?,
     onCheckoutClick: () -> Unit
 ) {
+    val descuentoPorcentaje = currentUser?.descuentoPorcentaje ?: 0
+    val subtotal = total
+    val descuento = if (descuentoPorcentaje > 0) {
+        subtotal * (descuentoPorcentaje / 100.0)
+    } else 0.0
+    val totalFinal = subtotal - descuento
+    val puntosAGanar = (totalFinal * 0.05).toInt()
+    
     Surface(
         modifier = Modifier.fillMaxWidth(),
         tonalElevation = 8.dp,
@@ -228,16 +240,76 @@ fun CartSummary(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
+            // Título
+            Text(
+                "Detalle de Boleta",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Cantidad de artículos
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "$itemCount ${if (itemCount == 1) "artículo" else "artículos"}",
+                    "Artículos:",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                Text(
+                    "$itemCount ${if (itemCount == 1) "producto" else "productos"}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // Subtotal
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Subtotal:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    formatearPrecio(subtotal),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+            
+            // Descuento DUOC (si aplica)
+            if (descuentoPorcentaje > 0) {
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Descuento DuocUC ($descuentoPorcentaje%):",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = NeonGreen,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        "-${formatearPrecio(descuento)}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = NeonGreen
+                    )
+                }
             }
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -246,22 +318,46 @@ fun CartSummary(
             
             Spacer(modifier = Modifier.height(8.dp))
             
+            // Total final
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Total:",
+                    "Total a Pagar:",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 
                 Text(
-                    formatearPrecio(total),
+                    formatearPrecio(totalFinal),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = NeonGreen
+                )
+            }
+            
+            // Puntos a ganar
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.Default.Star,
+                    contentDescription = null,
+                    tint = NeonGreen,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    "Ganarás $puntosAGanar puntos con esta compra",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = NeonGreen,
+                    fontWeight = FontWeight.Medium
                 )
             }
             
