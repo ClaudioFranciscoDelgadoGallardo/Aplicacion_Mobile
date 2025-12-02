@@ -53,6 +53,7 @@ class AuthViewModel(
             _authState.value = _authState.value.copy(isLoading = true, error = null)
             
             try {
+                // Solo usar backend, sin fallback local
                 val result = authRepository.loginWithBackend(email.trim(), password)
                 
                 result.onSuccess { user ->
@@ -65,42 +66,16 @@ class AuthViewModel(
                     )
                     onSuccess()
                 }.onFailure { backendException ->
-                    val localUser = authRepository.login(email.trim(), password)
-                    
-                    if (localUser != null) {
-                        userPreferences.saveUser(localUser.id, localUser.email, localUser.nombre)
-                        
-                        _authState.value = _authState.value.copy(
-                            isLoading = false,
-                            currentUser = localUser,
-                            error = null
-                        )
-                        onSuccess()
-                    } else {
-                        _authState.value = _authState.value.copy(
-                            isLoading = false,
-                            error = "Credenciales incorrectas o sin conexión"
-                        )
-                    }
+                    _authState.value = _authState.value.copy(
+                        isLoading = false,
+                        error = "Error de autenticación: ${backendException.message}"
+                    )
                 }
             } catch (e: Exception) {
-                val localUser = authRepository.login(email.trim(), password)
-                
-                if (localUser != null) {
-                    userPreferences.saveUser(localUser.id, localUser.email, localUser.nombre)
-                    
-                    _authState.value = _authState.value.copy(
-                        isLoading = false,
-                        currentUser = localUser,
-                        error = null
-                    )
-                    onSuccess()
-                } else {
-                    _authState.value = _authState.value.copy(
-                        isLoading = false,
-                        error = "Sin conexión y credenciales no encontradas localmente"
-                    )
-                }
+                _authState.value = _authState.value.copy(
+                    isLoading = false,
+                    error = "Error de conexión: ${e.message}"
+                )
             }
         }
     }
