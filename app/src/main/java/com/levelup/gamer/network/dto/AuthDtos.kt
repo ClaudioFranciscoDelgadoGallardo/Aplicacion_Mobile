@@ -23,8 +23,27 @@ data class RegisterRequest(
 data class AuthResponse(
     @SerializedName("token")
     val token: String?,
-    @SerializedName("usuario")
-    val usuario: UsuarioDto?
+    
+    @SerializedName("tipo")
+    val tipo: String?,
+    
+    @SerializedName("id")
+    val id: Long?,
+    
+    @SerializedName("nombre")
+    val nombre: String?,
+    
+    @SerializedName("apellidos")
+    val apellidos: String?,
+    
+    @SerializedName("correo")
+    val correo: String?,
+    
+    @SerializedName("rol")
+    val rol: String?,
+    
+    @SerializedName("mensaje")
+    val mensaje: String?
 )
 
 data class UsuarioDto(

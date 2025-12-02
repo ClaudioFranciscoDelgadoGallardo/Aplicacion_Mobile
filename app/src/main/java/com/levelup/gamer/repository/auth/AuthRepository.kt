@@ -16,14 +16,13 @@ class AuthRepository(private val userDao: UserDao) {
             
             if (response.isSuccessful && response.body() != null) {
                 val authResponse = response.body()!!
-                if (authResponse.token != null && authResponse.usuario != null) {
-                    val usuarioDto = authResponse.usuario
+                if (authResponse.token != null && authResponse.id != null) {
                     val user = UserEntity(
-                        id = usuarioDto.id?.toInt() ?: 0,
-                        email = usuarioDto.correo ?: email,
+                        id = authResponse.id.toInt(),
+                        email = authResponse.correo ?: email,
                         password = password,
-                        nombre = usuarioDto.nombre ?: "",
-                        isAdmin = usuarioDto.rol == "ADMIN"
+                        nombre = authResponse.nombre ?: "",
+                        isAdmin = authResponse.rol == "ADMIN"
                     )
                     
                     // Guardar en DB local
