@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.levelup.gamer.model.Producto
 import com.levelup.gamer.network.RetrofitClient
+import com.levelup.gamer.network.mappers.toProducto
+import com.levelup.gamer.network.mappers.toProductos
 import com.levelup.gamer.repository.ProductoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,7 +42,7 @@ class ProductoViewModel(
                 val response = apiService.getProductos()
 
                 if (response.isSuccessful && response.body() != null) {
-                    val productos = response.body()!!
+                    val productos = response.body()!!.toProductos()
                     _productos.value = productos
                     _uiState.value = ProductoUiState.Success(productos)
                 } else {
@@ -65,7 +67,7 @@ class ProductoViewModel(
                 val response = apiService.buscarProductos(query)
 
                 if (response.isSuccessful && response.body() != null) {
-                    val productos = response.body()!!
+                    val productos = response.body()!!.toProductos()
                     _productos.value = productos
                     _uiState.value = ProductoUiState.Success(productos)
                 } else {
@@ -88,7 +90,7 @@ class ProductoViewModel(
                 val response = apiService.getProductosByCategoria(categoria)
 
                 if (response.isSuccessful && response.body() != null) {
-                    val productos = response.body()!!
+                    val productos = response.body()!!.toProductos()
                     _productos.value = productos
                     _uiState.value = ProductoUiState.Success(productos)
                 } else {
@@ -103,10 +105,14 @@ class ProductoViewModel(
     fun obtenerProductoPorCodigo(codigo: String, onResult: (Producto?) -> Unit) {
         viewModelScope.launch {
             try {
-                val response = apiService.getProductoByCodigo(codigo)
+                // El backend no tiene endpoint por código, buscamos en la lista
+                val response = apiService.getProductos()
 
                 if (response.isSuccessful && response.body() != null) {
-                    onResult(response.body())
+                    val producto = response.body()!!
+                        .find { it.codigo == codigo }
+                        ?.toProducto()
+                    onResult(producto)
                 } else {
                     onResult(null)
                 }
