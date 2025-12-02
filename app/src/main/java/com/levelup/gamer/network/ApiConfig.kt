@@ -3,7 +3,7 @@ package com.levelup.gamer.network
 object ApiConfig {
     // ========== CONFIGURACIÓN DE MODO ===========
     // Cambia esto a true cuando el backend esté funcionando
-    const val BACKEND_ENABLED = false  // ⚠️ FALSE = usa Room local, TRUE = usa backend
+    const val BACKEND_ENABLED = true  // ✅ TRUE = usa backend, FALSE = usa Room local
     
     // URL base del API Gateway
     // EMULADOR: usa 10.0.2.2 (apunta al localhost de tu PC)
