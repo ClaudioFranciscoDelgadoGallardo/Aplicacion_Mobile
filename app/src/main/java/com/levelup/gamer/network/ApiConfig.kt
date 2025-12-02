@@ -8,7 +8,8 @@ object ApiConfig {
     // URL base del API Gateway
     // EMULADOR: usa 10.0.2.2 (apunta al localhost de tu PC)
     // DISPOSITIVO FÍSICO: usa la IP de tu PC en la red WiFi
-    const val BASE_URL = "http://10.0.2.2:8080/"
+    // TEMPORAL: Apuntando directo al Auth service (8081) hasta que API Gateway esté disponible
+    const val BASE_URL = "http://10.0.2.2:8081/"
     
     // URLs alternativas para diferentes entornos
     const val BASE_URL_LOCAL = "http://10.0.2.2:8080/"  // Emulador
