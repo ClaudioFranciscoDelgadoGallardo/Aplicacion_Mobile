@@ -10,33 +10,32 @@ data class LoginRequest(
 )
 
 data class RegisterRequest(
-    @SerializedName("nombre")
-    val nombre: String,
-    @SerializedName("apellidos")
-    val apellidos: String,
     @SerializedName("correo")
     val correo: String,
     @SerializedName("password")
     val password: String,
-    @SerializedName("telefono")
-    val telefono: String? = null
+    @SerializedName("nombre")
+    val nombre: String,
+    @SerializedName("run")
+    val run: String
 )
 
 data class AuthResponse(
     @SerializedName("token")
     val token: String?,
-    @SerializedName("tipo")
-    val tipo: String?,
+    @SerializedName("usuario")
+    val usuario: UsuarioDto?
+)
+
+data class UsuarioDto(
     @SerializedName("id")
     val id: Long?,
-    @SerializedName("nombre")
-    val nombre: String?,
-    @SerializedName("apellidos")
-    val apellidos: String?,
     @SerializedName("correo")
     val correo: String?,
+    @SerializedName("nombre")
+    val nombre: String?,
+    @SerializedName("run")
+    val run: String?,
     @SerializedName("rol")
-    val rol: String?,
-    @SerializedName("mensaje")
-    val mensaje: String?
+    val rol: String?
 )

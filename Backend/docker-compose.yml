@@ -1,0 +1,145 @@
+version: '3.8'
+
+services:
+  # Base de Datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: levelup-postgres
+    environment:
+      POSTGRES_DB: levelup_db
+      POSTGRES_USER: levelup
+      POSTGRES_PASSWORD: levelup123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - levelup-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U levelup"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Gateway (Puerto principal: 8080)
+  api-gateway:
+    build: ./LevelUp_Api_gateway
+    container_name: levelup-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - AUTH_SERVICE_URL=http://auth-service:8081
+      - USER_SERVICE_URL=http://user-service:8082
+      - PRODUCT_SERVICE_URL=http://product-service:8083
+      - ORDER_SERVICE_URL=http://order-service:8084
+    depends_on:
+      - auth-service
+      - user-service
+      - product-service
+      - order-service
+    networks:
+      - levelup-network
+
+  # Servicio de Autenticación
+  auth-service:
+    build: ./LevelUp_Auth_service
+    container_name: levelup-auth
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/levelup_db
+      - SPRING_DATASOURCE_USERNAME=levelup
+      - SPRING_DATASOURCE_PASSWORD=levelup123
+      - JWT_SECRET=LevelUpGamerSecretKey2024SuperSecureToken
+      - JWT_EXPIRATION=86400000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - levelup-network
+
+  # Servicio de Usuarios
+  user-service:
+    build: ./LevelUp_User_service
+    container_name: levelup-users
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/levelup_db
+      - SPRING_DATASOURCE_USERNAME=levelup
+      - SPRING_DATASOURCE_PASSWORD=levelup123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - levelup-network
+
+  # Servicio de Productos
+  product-service:
+    build: ./LevelUp_Product_service
+    container_name: levelup-products
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/levelup_db
+      - SPRING_DATASOURCE_USERNAME=levelup
+      - SPRING_DATASOURCE_PASSWORD=levelup123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - levelup-network
+
+  # Servicio de Órdenes
+  order-service:
+    build: ./LevelUp_Order_service
+    container_name: levelup-orders
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/levelup_db
+      - SPRING_DATASOURCE_USERNAME=levelup
+      - SPRING_DATASOURCE_PASSWORD=levelup123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - levelup-network
+
+  # Servicio de Notificaciones (Opcional)
+  notification-service:
+    build: ./LevelUp_Notification_service
+    container_name: levelup-notifications
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - levelup-network
+
+  # Servicio de Archivos (Opcional)
+  file-service:
+    build: ./LevelUp_File_service
+    container_name: levelup-files
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - UPLOAD_DIR=/uploads
+    volumes:
+      - file_storage:/uploads
+    networks:
+      - levelup-network
+
+networks:
+  levelup-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  file_storage:

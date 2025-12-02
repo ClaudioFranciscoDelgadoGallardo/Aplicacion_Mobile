@@ -16,23 +16,25 @@ class AuthRepository(private val userDao: UserDao) {
             
             if (response.isSuccessful && response.body() != null) {
                 val authResponse = response.body()!!
-                if (authResponse.token != null && authResponse.id != null) {
+                if (authResponse.token != null && authResponse.usuario != null) {
+                    val usuarioDto = authResponse.usuario
                     val user = UserEntity(
-                        id = authResponse.id.toInt(),
-                        email = authResponse.correo ?: email,
+                        id = usuarioDto.id?.toInt() ?: 0,
+                        email = usuarioDto.correo ?: email,
                         password = password,
-                        nombre = "${authResponse.nombre ?: ""} ${authResponse.apellidos ?: ""}".trim(),
-                        isAdmin = authResponse.rol == "ADMIN"
+                        nombre = usuarioDto.nombre ?: "",
+                        isAdmin = usuarioDto.rol == "ADMIN"
                     )
                     
+                    // Guardar en DB local
                     userDao.insertUser(user)
                     
                     Result.success(user)
                 } else {
-                    Result.failure(Exception(authResponse.mensaje ?: "Error en login"))
+                    Result.failure(Exception("Respuesta inválida del servidor"))
                 }
             } else {
-                Result.failure(Exception("Error de autenticación"))
+                Result.failure(Exception("Error de autenticación: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
