@@ -1,8 +1,8 @@
 package com.levelup.gamer.network
 
 object ApiConstants {
-    // TEMPORAL: Apuntando directo al Auth service (8081) hasta que API Gateway esté disponible
-    const val BASE_URL = "http://10.0.2.2:8081/"
+    // API Gateway - Redirige todas las peticiones a los microservicios correspondientes
+    const val BASE_URL = "http://10.0.2.2:8080/"
     
     object Endpoints {
         const val AUTH_LOGIN = "api/auth/login"

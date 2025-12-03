@@ -84,22 +84,22 @@ data class ProductoDto(
     @SerializedName("nombre")
     val nombre: String,
     
-    @SerializedName("descripcion")  // Backend usa "descripcion" simple
+    @SerializedName("descripcion")
     val descripcion: String,
     
-    @SerializedName("precio")
-    val precio: Double,
+    @SerializedName("precioVenta")  // Backend envía "precioVenta"
+    val precioVenta: Double,
     
-    @SerializedName("stock")
-    val stock: Int,
+    @SerializedName("stockActual")  // Backend envía "stockActual"
+    val stockActual: Int,
     
-    @SerializedName("categoria")
-    val categoria: String,
+    @SerializedName("categoriaId")  // Backend envía "categoriaId" (Long)
+    val categoriaId: Long,
     
-    @SerializedName("imagen")  // Backend usa "imagen"
-    val imagen: String? = null,
+    @SerializedName("imagenPrincipal")  // Backend envía "imagenPrincipal"
+    val imagenPrincipal: String? = null,
     
-    @SerializedName("destacado")  // Campo del backend
+    @SerializedName("destacado")
     val destacado: Boolean = false,
     
     @SerializedName("activo")
