@@ -6,7 +6,6 @@ import com.levelup.gamer.model.Producto
 import com.levelup.gamer.network.RetrofitClient
 import com.levelup.gamer.network.mappers.toProducto
 import com.levelup.gamer.network.mappers.toProductos
-import com.levelup.gamer.repository.ProductoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,9 +17,7 @@ sealed class ProductoUiState {
     data class Error(val message: String) : ProductoUiState()
 }
 
-class ProductoViewModel(
-    private val localRepository: ProductoRepository = ProductoRepository()
-) : ViewModel() {
+class ProductoViewModel : ViewModel() {
 
     private val apiService = RetrofitClient.apiService
 
@@ -46,10 +43,10 @@ class ProductoViewModel(
                     _productos.value = productos
                     _uiState.value = ProductoUiState.Success(productos)
                 } else {
-                    usarDatosLocales("Error del servidor: ${response.code()}")
+                    _uiState.value = ProductoUiState.Error("Error del servidor: ${response.code()}")
                 }
             } catch (e: Exception) {
-                usarDatosLocales("Error de conexión: ${e.message}")
+                _uiState.value = ProductoUiState.Error("Error de conexión: ${e.message}")
             }
         }
     }
@@ -74,10 +71,7 @@ class ProductoViewModel(
                     _uiState.value = ProductoUiState.Error("No se encontraron resultados")
                 }
             } catch (e: Exception) {
-                val resultadosLocales = localRepository.obtenerProductosDestacados()
-                    .filter { it.nombre.contains(query, ignoreCase = true) }
-                _productos.value = resultadosLocales
-                _uiState.value = ProductoUiState.Success(resultadosLocales)
+                _uiState.value = ProductoUiState.Error("Error de búsqueda: ${e.message}")
             }
         }
     }
@@ -105,7 +99,6 @@ class ProductoViewModel(
     fun obtenerProductoPorCodigo(codigo: String, onResult: (Producto?) -> Unit) {
         viewModelScope.launch {
             try {
-                // El backend no tiene endpoint por código, buscamos en la lista
                 val response = apiService.getProductos()
 
                 if (response.isSuccessful && response.body() != null) {
@@ -120,14 +113,6 @@ class ProductoViewModel(
                 onResult(null)
             }
         }
-    }
-
-    private fun usarDatosLocales(errorMessage: String) {
-        val productosLocales = localRepository.obtenerProductosDestacados()
-        _productos.value = productosLocales
-        _uiState.value = ProductoUiState.Success(productosLocales)
-
-        println("⚠️ Usando datos locales. Motivo: $errorMessage")
     }
 
     fun retry() {

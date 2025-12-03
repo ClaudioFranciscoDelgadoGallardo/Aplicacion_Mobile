@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LevelUp - Test Frontend</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .productos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .producto-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .producto-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .producto-imagen {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: #f9f9f9;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .producto-nombre {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .producto-precio {
+            color: #e74c3c;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .producto-codigo {
+            color: #7f8c8d;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 LevelUp - Catálogo de Productos</h1>
+    <div id="productos-container" class="loading">Cargando productos...</div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api/productos';
+        const ICONO_DEFAULT = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext x="50" y="50" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="14" fill="%23999"%3ESin imagen%3C/text%3E%3C/svg%3E';
+
+        async function cargarProductos() {
+            const container = document.getElementById('productos-container');
+            
+            try {
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const productos = await response.json();
+                
+                if (productos.length === 0) {
+                    container.innerHTML = '<div class="loading">No hay productos disponibles</div>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                container.className = 'productos-grid';
+                
+                productos.forEach(producto => {
+                    const card = document.createElement('div');
+                    card.className = 'producto-card';
+                    
+                    const imagenUrl = producto.imagenUrl && producto.imagenUrl.trim() !== '' 
+                        ? producto.imagenUrl 
+                        : ICONO_DEFAULT;
+                    
+                    card.innerHTML = `
+                        <img 
+                            src="${imagenUrl}" 
+                            alt="${producto.nombre}" 
+                            class="producto-imagen"
+                            onerror="this.src='${ICONO_DEFAULT}'"
+                        >
+                        <div class="producto-nombre">${producto.nombre}</div>
+                        <div class="producto-precio">$${producto.precio.toLocaleString('es-CL')}</div>
+                        <div class="producto-codigo">Código: ${producto.codigo}</div>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+                
+                console.log(`✅ ${productos.length} productos cargados`);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <h2>❌ Error al cargar productos</h2>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 10px;">
+                            <strong>Verifica:</strong><br>
+                            • API Gateway corriendo en puerto 8080<br>
+                            • Product Service corriendo en puerto 8083<br>
+                            • CORS habilitado en el backend
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // Cargar productos al iniciar
+        cargarProductos();
+    </script>
+</body>
+</html>

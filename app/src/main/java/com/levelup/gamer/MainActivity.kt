@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.levelup.gamer.data.UserPreferences
-import com.levelup.gamer.repository.ProductoRepository
 import com.levelup.gamer.repository.auth.AuthRepository
 import com.levelup.gamer.repository.carrito.CarritoRepository
 import com.levelup.gamer.repository.pedido.PedidoRepository
@@ -38,7 +37,6 @@ import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
     
-    private lateinit var productoRepository: ProductoRepository
     private lateinit var carritoRepository: CarritoRepository
     private lateinit var pedidoRepository: PedidoRepository
     private lateinit var favoritosRepository: FavoritosRepository
@@ -55,8 +53,6 @@ class MainActivity : ComponentActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        productoRepository = ProductoRepository()
         
         val database = AppDatabase.getDatabase(applicationContext)
         carritoRepository = CarritoRepository(database.carritoDao())
@@ -75,7 +71,7 @@ class MainActivity : ComponentActivity() {
         profileViewModel = ProfileViewModel(authViewModel, favoritosRepository, database.pedidoDao())
         productDetailViewModel = ProductDetailViewModel()
         pedidosViewModel = PedidosViewModel(pedidoRepository)
-        adminViewModel = AdminViewModel(productoRepository)
+        adminViewModel = AdminViewModel()
         
         setContent {
             LevelUpGamerTheme {
@@ -84,7 +80,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     MainApp(
-                        productoRepository = productoRepository,
                         carritoRepository = carritoRepository,
                         favoritosRepository = favoritosRepository,
                         authViewModel = authViewModel,
@@ -108,7 +103,6 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainApp(
-    productoRepository: ProductoRepository,
     carritoRepository: CarritoRepository,
     favoritosRepository: FavoritosRepository,
     authViewModel: AuthViewModel,

@@ -2,9 +2,6 @@ package com.levelup.gamer.network.models
 
 import com.google.gson.annotations.SerializedName
 
-// ==================== AUTENTICACIÓN ====================
-
-// Request para Login (según tu backend)
 data class LoginRequest(
     @SerializedName("correo")
     val correo: String,
@@ -13,7 +10,6 @@ data class LoginRequest(
     val password: String
 )
 
-// Request para Registro (según tu backend)
 data class RegisterRequest(
     @SerializedName("correo")
     val correo: String,
@@ -28,7 +24,6 @@ data class RegisterRequest(
     val run: String
 )
 
-// Response de Auth (tu backend devuelve esto)
 data class AuthResponse(
     @SerializedName("token")
     val token: String,
@@ -37,21 +32,20 @@ data class AuthResponse(
     val usuario: UsuarioDto
 )
 
-// DTO de Usuario (adaptado a tu backend)
 data class UsuarioDto(
     @SerializedName("id")
     val id: Long,
     
-    @SerializedName("correo")  // Backend usa "correo" en lugar de "email"
+    @SerializedName("correo")
     val correo: String,
     
     @SerializedName("nombre")
     val nombre: String,
     
-    @SerializedName("run")  // Campo adicional del backend
+    @SerializedName("run")
     val run: String? = null,
     
-    @SerializedName("rol")  // Backend devuelve rol (ADMIN, USUARIO, etc.)
+    @SerializedName("rol")
     val rol: String? = null,
     
     @SerializedName("isAdmin")
@@ -73,7 +67,6 @@ data class UsuarioDto(
     val direccion: String? = null
 )
 
-// DTO de Producto (adaptado a tu backend)
 data class ProductoDto(
     @SerializedName("id")
     val id: Long? = null,
@@ -87,17 +80,17 @@ data class ProductoDto(
     @SerializedName("descripcion")
     val descripcion: String,
     
-    @SerializedName("precioVenta")  // Backend envía "precioVenta"
+    @SerializedName("precioVenta")
     val precioVenta: Double,
     
-    @SerializedName("stockActual")  // Backend envía "stockActual"
+    @SerializedName("stockActual")
     val stockActual: Int,
     
-    @SerializedName("categoriaId")  // Backend envía "categoriaId" (Long)
+    @SerializedName("categoriaId")
     val categoriaId: Long,
     
-    @SerializedName("imagenPrincipal")  // Backend envía "imagenPrincipal"
-    val imagenPrincipal: String? = null,
+    @SerializedName("imagenUrl")
+    val imagenUrl: String? = null,
     
     @SerializedName("destacado")
     val destacado: Boolean = false,
@@ -106,7 +99,6 @@ data class ProductoDto(
     val activo: Boolean = true
 )
 
-// DTO de Orden/Pedido
 data class OrdenDto(
     @SerializedName("id")
     val id: Long? = null,
@@ -133,7 +125,6 @@ data class OrdenDto(
     val fechaCreacion: String? = null
 )
 
-// Item de una orden
 data class OrdenItemDto(
     @SerializedName("productoId")
     val productoId: Long,
@@ -151,7 +142,6 @@ data class OrdenItemDto(
     val subtotal: Double
 )
 
-// Respuesta genérica de la API
 data class ApiResponse<T>(
     @SerializedName("success")
     val success: Boolean,
@@ -166,7 +156,6 @@ data class ApiResponse<T>(
     val error: String? = null
 )
 
-// Request para actualizar stock
 data class UpdateStockRequest(
     @SerializedName("productoId")
     val productoId: Long,
@@ -175,7 +164,6 @@ data class UpdateStockRequest(
     val nuevoStock: Int
 )
 
-// Request para crear orden
 data class CreateOrdenRequest(
     @SerializedName("usuarioId")
     val usuarioId: Long,

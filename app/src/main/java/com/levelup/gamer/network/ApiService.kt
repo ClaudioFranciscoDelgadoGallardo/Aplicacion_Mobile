@@ -4,13 +4,7 @@ import com.levelup.gamer.network.models.*
 import retrofit2.Response
 import retrofit2.http.*
 
-/**
- * Interface Retrofit con los endpoints REALES de tu backend Spring Boot
- * Todos los endpoints pasan por el API Gateway (puerto 8080)
- */
 interface ApiService {
-    
-    // ==================== AUTENTICACIÓN ====================
     
     @POST("api/auth/login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<AuthResponse>
@@ -19,14 +13,10 @@ interface ApiService {
     suspend fun register(@Body registerRequest: RegisterRequest): Response<AuthResponse>
     
     @POST("api/auth/validate")
-    suspend fun validateToken(
-        @Header("Authorization") token: String  // Formato: "Bearer {token}"
-    ): Response<UsuarioDto>
+    suspend fun validateToken(@Header("Authorization") token: String): Response<UsuarioDto>
     
     @GET("api/auth/health")
     suspend fun authHealth(): Response<Map<String, String>>
-    
-    // ==================== PRODUCTOS ====================
     
     @GET("api/productos")
     suspend fun getProductos(): Response<List<ProductoDto>>
@@ -35,19 +25,13 @@ interface ApiService {
     suspend fun getProductosDestacados(): Response<List<ProductoDto>>
     
     @GET("api/productos/categoria/{categoria}")
-    suspend fun getProductosByCategoria(
-        @Path("categoria") categoria: String
-    ): Response<List<ProductoDto>>
+    suspend fun getProductosByCategoria(@Path("categoria") categoria: String): Response<List<ProductoDto>>
     
     @GET("api/productos/buscar")
-    suspend fun buscarProductos(
-        @Query("nombre") nombre: String
-    ): Response<List<ProductoDto>>
+    suspend fun buscarProductos(@Query("nombre") nombre: String): Response<List<ProductoDto>>
     
     @GET("api/productos/{id}")
-    suspend fun getProductoById(
-        @Path("id") id: Long
-    ): Response<ProductoDto>
+    suspend fun getProductoById(@Path("id") id: Long): Response<ProductoDto>
     
     @POST("api/productos")
     suspend fun createProducto(
@@ -90,12 +74,8 @@ interface ApiService {
     @GET("api/productos/health")
     suspend fun productosHealth(): Response<Map<String, String>>
     
-    // ==================== USUARIOS ====================
-    
     @GET("api/usuarios")
-    suspend fun getUsuarios(
-        @Header("Authorization") token: String
-    ): Response<List<UsuarioDto>>
+    suspend fun getUsuarios(@Header("Authorization") token: String): Response<List<UsuarioDto>>
     
     @GET("api/usuarios/{id}")
     suspend fun getUsuarioById(
@@ -109,8 +89,6 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body usuario: UsuarioDto
     ): Response<UsuarioDto>
-    
-    // ==================== ÓRDENES ====================
     
     @POST("api/ordenes")
     suspend fun createOrden(

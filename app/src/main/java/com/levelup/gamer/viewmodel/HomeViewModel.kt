@@ -3,7 +3,8 @@ package com.levelup.gamer.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.levelup.gamer.model.Producto
-import com.levelup.gamer.repository.ProductoRepository
+import com.levelup.gamer.network.RetrofitClient
+import com.levelup.gamer.network.mappers.toProductos
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,10 +20,9 @@ data class HomeUiState(
     val error: String? = null
 )
 
-class HomeViewModel(
-    private val productoRepository: ProductoRepository = ProductoRepository()
-) : ViewModel() {
+class HomeViewModel : ViewModel() {
 
+    private val apiService = RetrofitClient.apiService
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
@@ -34,12 +34,28 @@ class HomeViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             
-            val productosLocales = productoRepository.obtenerProductosDestacados()
-            _uiState.value = _uiState.value.copy(
-                productos = productosLocales,
-                productosFiltrados = productosLocales,
-                isLoading = false
-            )
+            try {
+                val response = apiService.getProductos()
+                
+                if (response.isSuccessful && response.body() != null) {
+                    val productos = response.body()!!.toProductos()
+                    _uiState.value = _uiState.value.copy(
+                        productos = productos,
+                        productosFiltrados = productos,
+                        isLoading = false
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Error del servidor: ${response.code()}"
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Error de conexión: ${e.message}"
+                )
+            }
         }
     }
 

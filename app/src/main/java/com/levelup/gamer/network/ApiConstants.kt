@@ -1,7 +1,6 @@
 package com.levelup.gamer.network
 
 object ApiConstants {
-    // API Gateway - Redirige todas las peticiones a los microservicios correspondientes
     const val BASE_URL = "http://10.0.2.2:8080/"
     
     object Endpoints {
