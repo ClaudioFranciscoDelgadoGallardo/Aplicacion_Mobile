@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.levelup.gamer.model.Producto
+import com.levelup.gamer.R
 import com.levelup.gamer.model.UserEntity
 import com.levelup.gamer.repository.favoritos.FavoritosRepository
 import com.levelup.gamer.ui.components.FloatingNavigationButtons
@@ -104,16 +105,19 @@ fun ProductDetailScreen(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     val context = LocalContext.current
-                    val imageResource = com.levelup.gamer.utils.ImageUtils.getDrawableResourceId(
-                        context,
-                        producto.imagenUrl
-                    )
                     
-                    if (imageResource != 0) {
+                    // Detectar si es URL de internet o recurso local
+                    val isUrl = producto.imagenUrl.startsWith("http://") || 
+                               producto.imagenUrl.startsWith("https://")
+                    
+                    if (isUrl) {
+                        // Cargar imagen desde URL (Supabase Storage)
                         AsyncImage(
                             model = ImageRequest.Builder(context)
-                                .data(imageResource)
+                                .data(producto.imagenUrl)
                                 .crossfade(true)
+                                .placeholder(R.drawable.icono)
+                                .error(R.drawable.icono)
                                 .build(),
                             contentDescription = producto.nombre,
                             modifier = Modifier
@@ -123,14 +127,35 @@ fun ProductDetailScreen(
                             contentScale = ContentScale.Fit
                         )
                     } else {
-                        Icon(
-                            imageVector = Icons.Filled.SportsEsports,
-                            contentDescription = producto.nombre,
-                            modifier = Modifier
-                                .size(200.dp)
-                                .align(Alignment.CenterHorizontally),
-                            tint = Color(0xFF39FF14)
+                        // Cargar imagen desde recursos locales
+                        val imageResource = com.levelup.gamer.utils.ImageUtils.getDrawableResourceId(
+                            context,
+                            producto.imagenUrl
                         )
+                        
+                        if (imageResource != 0) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(imageResource)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = producto.nombre,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(300.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                contentScale = ContentScale.Fit
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Filled.SportsEsports,
+                                contentDescription = producto.nombre,
+                                modifier = Modifier
+                                    .size(200.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                tint = Color(0xFF39FF14)
+                            )
+                        }
                     }
                     
                     Spacer(modifier = Modifier.height(16.dp))

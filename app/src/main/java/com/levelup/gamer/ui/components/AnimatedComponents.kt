@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.levelup.gamer.model.Producto
+import com.levelup.gamer.R
 import kotlinx.coroutines.delay
 
 @Composable
@@ -88,34 +89,55 @@ fun AnimatedProductCard(
                         )
                         
                         val context = LocalContext.current
-                        val imageResource = com.levelup.gamer.utils.ImageUtils.getDrawableResourceId(
-                            context,
-                            producto.imagenUrl
-                        )
                         
-                        if (imageResource != 0) {
+                        // Detectar si es URL de internet o recurso local
+                        val isUrl = producto.imagenUrl.startsWith("http://") || 
+                                   producto.imagenUrl.startsWith("https://")
+                        
+                        if (isUrl) {
+                            // Cargar imagen desde URL (Supabase Storage)
                             AsyncImage(
                                 model = ImageRequest.Builder(context)
-                                    .data(imageResource)
+                                    .data(producto.imagenUrl)
                                     .crossfade(true)
+                                    .placeholder(R.drawable.icono)
+                                    .error(R.drawable.icono)
                                     .build(),
                                 contentDescription = producto.nombre,
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
                         } else {
-                            Icon(
-                                imageVector = when (producto.categoria) {
-                                    "Consolas" -> Icons.Default.Gamepad
-                                    "Juegos" -> Icons.Default.SportsEsports
-                                    "Accesorios" -> Icons.Default.Headset
-                                    "PC Gaming" -> Icons.Default.Computer
-                                    else -> Icons.Default.Image
-                                },
-                                contentDescription = producto.nombre,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(iconSize)
+                            // Cargar imagen desde recursos locales
+                            val imageResource = com.levelup.gamer.utils.ImageUtils.getDrawableResourceId(
+                                context,
+                                producto.imagenUrl
                             )
+                            
+                            if (imageResource != 0) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(context)
+                                        .data(imageResource)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = producto.nombre,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = when (producto.categoria) {
+                                        "Consolas" -> Icons.Default.Gamepad
+                                        "Juegos", "Videojuegos" -> Icons.Default.SportsEsports
+                                        "Accesorios" -> Icons.Default.Headset
+                                        "PC Gaming" -> Icons.Default.Computer
+                                        else -> Icons.Default.Image
+                                    },
+                                    contentDescription = producto.nombre,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(iconSize)
+                                )
+                            }
                         }
 
                         Box(
